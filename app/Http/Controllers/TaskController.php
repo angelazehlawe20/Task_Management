@@ -25,11 +25,11 @@ class TaskController extends Controller
                 $tasks->orderBy('title');
                 break;
             default:
-                return $this->ResponseTasks(['message' => 'Invalid sorting parameter'], 400);
+                return $this->ResponseTasks(null,'Invalid sorting parameter', 400);
                 break;
         }
         $sortedTasks=$tasks->get();
-        return $this->ResponseTasks(['tasks' => $sortedTasks]);
+        return $this->ResponseTasks($sortedTasks,null,200);
     }
 
 
@@ -51,33 +51,36 @@ class TaskController extends Controller
             'due_date' => $validatedData['due_date'],
         ]);
 
-        return $this->ResponseTasks(['message' => 'Task created successfully','task'=>$newTask]);
+        return $this->ResponseTasks($newTask,'Task created successfully',201);
     }
 
 
     public function show(Request $request,Task $task)
     {
-        $one=Task::where('title',$request->title)->first();
-        return $this->ResponseTasks($one);
+        $one=Task::where('title',$request->title)->get();
+        if(!$one)
+        {
+            return $this->ResponseTasks(null,'Task not found',404);
+        }
+        return $this->ResponseTasks($one,'Task retrieved successfully',200);
     }
 
 
     public function update(Request $request, Task $task)
 {
     $validatedData = $request->validate([
-        'task_id' => 'integer|required|exists:tasks,id',
+        'id' => 'integer|required|exists:tasks,id',
         'priority_id' => 'integer|exists:priorities,id',
         'title' => 'string',
         'description' => 'string',
-        'status' => 'string|in:COMPLETED,IN_PROGRESS,PENDING', // تحديد القيم المعينة لل ENUM
+        'status' => 'integer|in:1,2,3',
         'due_date' => 'date_format:Y-m-d'
     ]);
 
-    $task = Task::findOrFail($validatedData['task_id']);
-    $task->status = $request->input('status'); // تعيين القيمة المعينة لل ENUM
-    $task->update($request->except('task_id'));
+    $task = Task::findOrFail($validatedData['id']);
+    $task->status = $request->input('status');
+    $task->update($request->except('id'));
 
-    // تحديد الحقول التي تريد عرضها في الاستجابة بأسماءها الصحيحة
     $task->setVisible([
         'id',
         'user_id',
@@ -88,7 +91,7 @@ class TaskController extends Controller
         'status'
     ]);
 
-    return $this->ResponseTasks(['message' => 'Task updated successfully', 'task' => $task]);
+    return $this->ResponseTasks($task,'Task updated successfully',200);
 }
 
 public function delete(Request $request) {
@@ -109,7 +112,7 @@ public function delete(Request $request) {
 }
 
 
-    public function showStatus(Request $request)
+   public function showStatus(Request $request)
     {
             $stat = $request->input('status');
 

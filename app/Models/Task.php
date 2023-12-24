@@ -9,7 +9,7 @@ class Task extends Model
 {
     use HasFactory;
     protected $table='tasks';
-    protected $fillable=['user_id','priority_id','title','description','Status','due_date'];
+    protected $fillable=['user_id','priority_id','title','description','status','due_date'];
 
 
     public function priority()

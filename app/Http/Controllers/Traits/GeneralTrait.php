@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Traits;
 
 trait GeneralTrait
 {
-    public function ResponseTasks($data=null,$message=null,$status=null,){
+    public function ResponseTasks($data=null,$message=null,$status=null){
         $array=[
             'data'=>$data,
             'message'=>$message,
