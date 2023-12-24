@@ -14,21 +14,19 @@ class TaskController extends Controller
     {
         $sortBy=$request->input('sort_by','priority');
         $tasks=Task::with(['priority']);
-        if($sortBy==='priority')
-        {
-            $tasks->orderBy('priority_id')->orderBy('due_date');
-        }
-        elseif($sortBy==='date')
-        {
-            $tasks->orderBy('due_date')->orderBy('priority_id');
-        }
-        elseif($sortBy==='name')
-        {
-            $tasks->orderBy('title');
-        }
-        else
-        {
-            return $this->ResponseTasks(['message'=>'Invalid sorting parameter',400]);
+        switch ($sortBy) {
+            case 'priority':
+                $tasks->orderBy('priority_id')->orderBy('due_date');
+                break;
+            case 'date':
+                $tasks->orderBy('due_date')->orderBy('priority_id');
+                break;
+            case 'name':
+                $tasks->orderBy('title');
+                break;
+            default:
+                return $this->ResponseTasks(['message' => 'Invalid sorting parameter'], 400);
+                break;
         }
         $sortedTasks=$tasks->get();
         return $this->ResponseTasks(['tasks' => $sortedTasks]);
