@@ -95,20 +95,19 @@ class TaskController extends Controller
 }
 
 public function delete(Request $request) {
-    $validatedData = $request->validate([
-        'id' => 'required|exists:tasks,id',
-    ]);
+    $task_id = $request->id;
 
-    $task = Task::find($validatedData['id']);
+    $task = Task::find($task_id);
 
     if (!$task) {
-        return $this->ResponseTasks(['message' => 'Task not found', 404]);
+        return $this->ResponseTasks(null, 'Task not found', 404);
     }
 
     $task->delete();
-    $tasks=Task::all();
 
-    return $this->ResponseTasks(['message' => 'Task deleted successfully','Tasks'=>$tasks]);
+    $tasks = Task::all();
+
+    return $this->ResponseTasks($tasks, 'Task deleted successfully', 200);
 }
 
 
@@ -126,13 +125,13 @@ public function delete(Request $request) {
                 $taskStat = Task::where('status', $statusMap[$stat])->get();
                 if ($taskStat->count() > 0)
                 {
-                    return $this->ResponseTasks($taskStat);
+                    return $this->ResponseTasks($taskStat,'Tasks with status '.$stat.' retrieved successfully',200);
                 }
-                return $this->ResponseTasks(['message' => 'No tasks found for the selected status']);
+                return $this->ResponseTasks(null,'No tasks found for the selected status',404);
             }
             else
              {
-                return $this->ResponseTasks(['message' => 'Status not found']);
+                return $this->ResponseTasks(null,'Status '.$stat.' not found',404);
             }
         }
 
