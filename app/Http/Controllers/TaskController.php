@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Traits\GeneralTrait;
 use App\Models\Task;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class TaskController extends Controller
 {
@@ -68,6 +69,7 @@ class TaskController extends Controller
 
     public function update(Request $request, Task $task)
 {
+    try{
     $validatedData = $request->validate([
         'id' => 'integer|required|exists:tasks,id',
         'priority_id' => 'integer|exists:priorities,id',
@@ -76,6 +78,11 @@ class TaskController extends Controller
         'status' => 'integer|in:1,2,3',
         'due_date' => 'date_format:Y-m-d'
     ]);
+}
+    catch(ValidationException $e){
+
+        return $this->ResponseTasksErrors('Please ensure the accuracy of the provided information and fill in the required fields',400);
+    }
 
     $task = Task::findOrFail($validatedData['id']);
     $task->status = $request->input('status');
