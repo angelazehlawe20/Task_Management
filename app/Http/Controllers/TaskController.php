@@ -33,7 +33,7 @@ class TaskController extends Controller
                 break;
         }
         $sortedTasks=$tasks->get();
-        return $this->ResponseTasks($sortedTasks,null,200);
+        return $this->ResponseTasks($sortedTasks,'All tasks by '.$sortBy.':',200);
     }
 
 
