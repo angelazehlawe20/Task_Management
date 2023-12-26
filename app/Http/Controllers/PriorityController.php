@@ -38,7 +38,7 @@ class PriorityController extends Controller
 {
     try {
         $validatedData = $request->validate([
-            'name' => 'required|string',
+            'name' => 'required|string|in:high,medium,low',
             'description' => 'required|string',
             'order' => 'required|string|in:high,medium,low',
             'color_or_mark' => 'required|string|in:#FF0000,#FFFF00,#00FF00'
