@@ -33,5 +33,22 @@ class PriorityController extends Controller
 
     }
 
+    public function updatePriority(Request $request,Priority $priority){
+        $priority_id=$request->input('id');
+        $priorityUpd = Priority::find($priority_id);
+
+        if (!$priority) {
+            return response()->json(['message' => 'Priority not found'], 404);
+        }
+
+        $priority->name = $request->input('name'); // تحديث الاسم
+        $priority->description = $request->input('description'); // تحديث الوصف
+
+        $priority->save();
+
+        return response()->json(['message' => 'Priority updated successfully'], 200);
+    }
+    }
+
 
 }
