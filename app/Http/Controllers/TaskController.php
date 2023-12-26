@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Traits\GeneralTrait;
 use App\Models\Task;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+
+use function PHPUnit\Framework\isEmpty;
 
 class TaskController extends Controller
 {
@@ -36,6 +39,7 @@ class TaskController extends Controller
 
     public function newTask(Request $request)
     {
+        try{
         $validatedData = $request->validate([
             'user_id' => 'required|exists:users,id',
             'priority_id' => 'required|exists:priorities,id',
@@ -43,6 +47,13 @@ class TaskController extends Controller
             'description' => 'string',
             'due_date' => 'required|date_format:Y-m-d'
         ]);
+    }
+    catch(ValidationException $e){
+        return $this->ResponseTasksErrors('Please ensure the accuracy of the provided information and fill in the required fields',400);
+    }
+    catch(Exception $e){
+        return $this->ResponseTasksErrors('An error occurred while creating the task',500);
+    }
 
         $newTask = Task::create([
             'user_id' => $validatedData['user_id'],
@@ -59,9 +70,9 @@ class TaskController extends Controller
     public function show(Request $request,Task $task)
     {
         $one=Task::where('title',$request->title)->get();
-        if(!$one)
+        if($one->isEmpty())
         {
-            return $this->ResponseTasks(null,'Task not found',404);
+            return $this->ResponseTasksErrors('Task not found',404);
         }
         return $this->ResponseTasks($one,'Task retrieved successfully',200);
     }
