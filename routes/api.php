@@ -40,3 +40,4 @@ Route::post('/deleteComment',[CommentController::class,'deletComm']);
 
                ///priority
 Route::post('/getSotedPriority',[PriorityController::class,'getAll']);
+Route::post('/addPriority',[PriorityController::class,'create']);
