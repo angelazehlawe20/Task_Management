@@ -29,7 +29,7 @@ class TaskController extends Controller
                 $tasks->orderBy('title');
                 break;
             default:
-                return $this->ResponseTasks(null,'Invalid sorting parameter', 400);
+                return $this->ResponseTasksErrors('Invalid sorting parameter', 400);
                 break;
         }
         $sortedTasks=$tasks->get();
