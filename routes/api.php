@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\PriorityController;
 use App\Http\Controllers\TaskController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -36,3 +37,6 @@ Route::post('/commOfTask',[CommentController::class,'getCommOfTask']);
 Route::post('/updateComment',[CommentController::class,'updateComment']);
 Route::post('/getUserComments',[CommentController::class,'getUserComments']);
 Route::post('/deleteComment',[CommentController::class,'deletComm']);
+
+               ///priority
+Route::post('/getSotedPriority',[PriorityController::class,'getAll']);
