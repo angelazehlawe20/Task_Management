@@ -98,9 +98,16 @@ public function getAllSorted(Request $request){
             return $this->ResponseTasks($commentId,'Comment updated successfully',200);
     }
 
-    public function deletComm()
+    public function deletComm(Request $request)
     {
-
+        $comm_id=$request->input('id');
+        $commDel=Comment::findOrFail($comm_id);
+        if(!$commDel){
+            return $this->ResponseTasksErrors('Comment not found');
+        }
+        $commDel->delete();
+        $comments=Comment::all();
+        return $this->ResponseTasks($comments,'Comment deleted successfully',200);
     }
 
 
