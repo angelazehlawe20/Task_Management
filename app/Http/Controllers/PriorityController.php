@@ -38,7 +38,6 @@ class PriorityController extends Controller
 {
     try {
         $validatedData = $request->validate([
-            'name' => 'required|string|in:high,medium,low',
             'description' => 'required|string',
             'order' => 'required|string|in:high,medium,low',
             'color_or_mark' => 'required|string|in:#FF0000,#FFFF00,#00FF00'
@@ -59,7 +58,6 @@ class PriorityController extends Controller
         try {
             $validatedData = $request->validate([
                 'id' => 'integer|required|exists:priorities,id',
-                'name' => 'string',
                 'description' => 'string',
                 'order' => 'string|in:high,medium,low',
                 'color_or_mark' => 'string|in:#FF0000,#FFFF00,#00FF00'
@@ -73,7 +71,6 @@ class PriorityController extends Controller
 
         $priority->setVisible([
             'id',
-            'name',
             'description',
             'order',
             'color_or_mark']);

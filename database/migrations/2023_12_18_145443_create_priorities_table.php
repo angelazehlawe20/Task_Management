@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('priorities', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
             $table->string('description');
             $table->enum('order', ['high', 'medium', 'low']);
             $table->string('color_or_mark');
