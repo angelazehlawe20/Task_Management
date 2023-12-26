@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Traits\GeneralTrait;
 use App\Models\Comment;
+use Dotenv\Exception\ValidationException;
+use Exception;
 use Illuminate\Http\Request;
 
 class CommentController extends Controller
@@ -36,7 +38,33 @@ public function getAllSorted(Request $request){
         return $this->ResponseTasks($one,'Task retrieved successfully',200);
     }
 
-    public function FunctionName() : Returntype {
 
+    public function newComment(Request $request)
+    {
+        try{
+        $validatedData = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'task_id' => 'required|exists:tasks,id',
+            'content' => 'required|string',
+        ]);
     }
+    catch(ValidationException $e){
+        return $this->ResponseTasksErrors('Please ensure the accuracy of the provided information and fill in the required fields',400);
+    }
+    catch(Exception $e){
+        return $this->ResponseTasksErrors('An error occurred while creating the comment',500);
+    }
+
+        $newComment = Comment::create([
+            'user_id' => $validatedData['user_id'],
+            'task_id' => $validatedData['task_id'],
+            'content' => $validatedData['content'],
+        ]);
+
+        return $this->ResponseTasks($newComment,'Comment created successfully',201);
+    }
+
+
+
+
 }
