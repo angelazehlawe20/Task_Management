@@ -14,13 +14,13 @@ class CommentController extends Controller
     use GeneralTrait;
 public function getAllSorted(Request $request){
     $sortBy=$request->input('sort_by','date');
-        $comments=Comment::with(['date']);
+        $comments=Comment::query();
         switch ($sortBy) {
             case 'date':
                 $comments->orderBy('addition_date');
                 break;
             case 'comment':
-                $comments->orderBy('content');
+                $comments->orderBy('content')->orderBy('addition_date');
                 break;
             default:
                 return $this->ResponseTasksErrors('Invalid sorting parameter', 400);
@@ -90,7 +90,7 @@ public function getAllSorted(Request $request){
         }
     }
 
-    
+
     public function getUserComments(Request $request)
 {
     try {

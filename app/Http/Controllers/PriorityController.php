@@ -13,13 +13,16 @@ class PriorityController extends Controller
 
     public function getAll(Request $request,Priority $priority){
         $sortBy=$request->input('sort_by','order');
-        $priorities=Priority::with(['order']);
+        $priorities=Priority::query();
         switch($sortBy){
-            case 'priority':
+            case 'importance':
                 $priorities->orderBy('order');
                 break;
             case 'color':
                 $priorities->orderBy('color_or_mark');
+                break;
+            case 'name':
+                $priorities->orderBy('name');
                 break;
             default:
             return $this->ResponseTasksErrors('Invalid sorting parameter', 400);
@@ -31,12 +34,4 @@ class PriorityController extends Controller
     }
 
 
-    public function create(){
-
-        $priority = Priority::create([
-            'name' => 'High Priority',
-            'description' => 'This is a high priority task',
-            'order' => Priority::HIGH,
-            'color_or_mark' => Priority::COLORS[Priority::HIGH]]);
-        }
 }
