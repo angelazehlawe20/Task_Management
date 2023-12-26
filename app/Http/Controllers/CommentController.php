@@ -71,32 +71,27 @@ public function getAllSorted(Request $request){
     }
     }
 
-    public function updateComm(Request $request,Comment $comment)
+    public function updateComment(Request $request, Comment $comment)
     {
-        try{
-            $validatedData = $request->validate([
-                'id' => 'integer|required|exists:comments,id',
-                'content' => 'string',
-            ]);
-        }
-            catch(ValidationException $e){
+        try {
 
-                return $this->ResponseTasksErrors('Please ensure the accuracy of the provided information and fill in the required fields',400);
+            $comm_id=$request->input('id');
+            $comment = Comment::findOrFail($comm_id);
+
+            if ($request->filled('content')) {
+                $comment->update(['content' => $request->input('content')]);
             }
 
-            $task = Comment::find($validatedData['id']);
-            if($task){
-            $task->update($request->except('id'));
-
-            $task->setVisible([
-                'id',
-                'content'
-            ]);
-
-            return $this->ResponseTasks($task,'Task updated successfully',200);
+            return $this->ResponseTasks($comment, 'Comment updated successfully', 200);
         }
-        return $this->ResponseTasksErrors('Comment not found',404);
+        catch (ModelNotFoundException $e)
+        {
+            return $this->ResponseTasksErrors('Comment not found', 404);
+        }
     }
+
+
+
 
     public function deletComm(Request $request)
     {
