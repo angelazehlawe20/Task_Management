@@ -6,6 +6,7 @@ use App\Http\Controllers\Traits\GeneralTrait;
 use App\Models\Comment;
 use Dotenv\Exception\ValidationException;
 use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
 class CommentController extends Controller
@@ -70,11 +71,37 @@ public function getAllSorted(Request $request){
     }
     }
 
-    public function update()
+    public function updateComm(Request $request,Comment $comment)
     {
-        
+        try{
+            $validatedData = $request->validate([
+                'id' => 'integer|required|exists:comments,id',
+                'content' => 'string',
+            ]);
+        }
+            catch(ValidationException $e){
+
+                return $this->ResponseTasksErrors('Please ensure the accuracy of the provided information and fill in the required fields',400);
+            }
+            $commentId = Comment::findOrFail($validatedData['id']);
+            if(!$commentId) {
+                return $this->ResponseTasksErrors('Comment not found', 404);
+            }
+
+            $commentId->update($request->except('id'));
+
+            $commentId->setVisible([
+                'id',
+                'content',
+            ]);
+
+            return $this->ResponseTasks($commentId,'Comment updated successfully',200);
     }
 
+    public function deletComm()
+    {
+
+    }
 
 
 }
