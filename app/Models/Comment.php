@@ -18,6 +18,10 @@ public function task()
     {
         return $this->belongsTo(Comment::class, 'task_id');
     }
+    public function date()
+    {
+        return $this->belongsTo(Date::class, 'addition_date_id');
+    }
 
 
 }

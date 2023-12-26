@@ -31,11 +31,21 @@ public function getAllSorted(Request $request){
 
     public function getOne(Request $request,Comment $comment)
     {
+
         $one=Comment::where('id',$request->id)->get();
         if($one->isEmpty()){
             return $this->ResponseTasksErrors('Comment not found',404);
         }
         return $this->ResponseTasks($one,'Task retrieved successfully',200);
+    }
+
+    public function getCommOfTask(Request $request,Comment $comment){
+        $task_id=$request->input('task_id');
+        $commTask=Comment::where('task_id',$task_id)->get();
+        if($commTask->isEmpty()){
+            return $this->ResponseTasksErrors('Task not found',404);
+        }
+        return $this->ResponseTasks($commTask,'Comments related to task #'.$task_id,200);
     }
 
 
@@ -60,6 +70,10 @@ public function getAllSorted(Request $request){
     }
     }
 
+    public function update()
+    {
+        
+    }
 
 
 

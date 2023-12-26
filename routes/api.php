@@ -30,5 +30,6 @@ Route::post('/statusTask',[TaskController::class,'showStatus']);
 
                ////comment
 Route::post('/getSortedComments', [CommentController::class,'getAllSorted']);
+Route::post('/getComment', [CommentController::class,'getOne']);
 Route::post('/addComm',[CommentController::class,'newComment']);
-
+Route::post('/commOfTask',[CommentController::class,'getCommOfTask']);
