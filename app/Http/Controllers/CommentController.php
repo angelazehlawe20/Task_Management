@@ -9,11 +9,22 @@ use Illuminate\Http\Request;
 class CommentController extends Controller
 {
     use GeneralTrait;
-
-    public function getAll()
-    {
-        $get=Comment::all();
-        return $this->ResponseTasks($get,'All existing comments',200);
+public function getAllSorted(Request $request){
+    $sortBy=$request->input('sort_by','addition_date');
+        $comments=Comment::with(['addition_date']);
+        switch ($sortBy) {
+            case 'addition_date':
+                $comments->orderBy('addition_date');
+                break;
+            case 'content':
+                $comments->orderBy('content');
+                break;
+            default:
+                return $this->ResponseTasksErrors('Invalid sorting parameter', 400);
+                break;
+        }
+        $sortedComments=$comments->get();
+        return $this->ResponseTasks($sortedComments,null,200);
     }
 
     public function getOne(Request $request,Comment $comment)
