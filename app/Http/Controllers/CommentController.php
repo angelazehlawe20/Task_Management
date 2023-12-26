@@ -35,4 +35,8 @@ public function getAllSorted(Request $request){
         }
         return $this->ResponseTasks($one,'Task retrieved successfully',200);
     }
+
+    public function FunctionName() : Returntype {
+
+    }
 }
