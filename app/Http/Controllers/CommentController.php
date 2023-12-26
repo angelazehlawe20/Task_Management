@@ -10,13 +10,13 @@ class CommentController extends Controller
 {
     use GeneralTrait;
 public function getAllSorted(Request $request){
-    $sortBy=$request->input('sort_by','addition_date');
-        $comments=Comment::with(['addition_date']);
+    $sortBy=$request->input('sort_by','date');
+        $comments=Comment::with(['date']);
         switch ($sortBy) {
-            case 'addition_date':
+            case 'date':
                 $comments->orderBy('addition_date');
                 break;
-            case 'content':
+            case 'comment':
                 $comments->orderBy('content');
                 break;
             default:
@@ -24,7 +24,7 @@ public function getAllSorted(Request $request){
                 break;
         }
         $sortedComments=$comments->get();
-        return $this->ResponseTasks($sortedComments,null,200);
+        return $this->ResponseTasks($sortedComments,'All comments by '.$sortBy.':',200);
     }
 
     public function getOne(Request $request,Comment $comment)
