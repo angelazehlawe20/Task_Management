@@ -90,7 +90,22 @@ public function getAllSorted(Request $request){
         }
     }
 
+    public function getUserComments(Request $request)
+{
+    try {
+        $user_id = $request->input('user_id');
 
+        $userComments = Comment::where('user_id', $user_id)->get();
+
+        if($userComments->isEmpty()) {
+            return $this->ResponseTasksErrors('No comments found for this user', 404);
+        }
+
+        return $this->ResponseTasks($userComments, 'Comments for user #' . $user_id, 200);
+    } catch (Exception $e) {
+        return $this->ResponseTasksErrors('An error occurred while processing the request', 500);
+    }
+}
 
 
     public function deletComm(Request $request)
