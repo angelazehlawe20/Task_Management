@@ -118,7 +118,7 @@ public function delete(Request $request) {
     $task = Task::find($task_id);
 
     if (!$task) {
-        return $this->ResponseTasks(null, 'Task not found', 404);
+        return $this->ResponseTasksErrors('Task not found', 404);
     }
 
     $task->delete();
@@ -145,11 +145,11 @@ public function delete(Request $request) {
                 {
                     return $this->ResponseTasks($taskStat,'Tasks with status '.$stat.' retrieved successfully',200);
                 }
-                return $this->ResponseTasks(null,'No tasks found for the selected status',404);
+                return $this->ResponseTasksErrors('No tasks found for the selected status',404);
             }
             else
              {
-                return $this->ResponseTasks(null,'Status '.$stat.' not found',404);
+                return $this->ResponseTasksErrors('Status '.$stat.' not found',404);
             }
         }
 
