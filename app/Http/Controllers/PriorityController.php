@@ -61,6 +61,17 @@ class PriorityController extends Controller
         return $this->ResponseTasks($priority,'Priority updated successfully', 200);
     }
 
+    public function deletPriority(Request $request,Priority $priority){
+        $prio_id=$request->input('id');
+        $prioDel=Priority::find($prio_id);
+        if(!$prioDel){
+            return $this->ResponseTasksErrors('Priority not found',404);
+        }
+        $prioDel->delete();
+        $priorities=Priority::all();
+        return $this->ResponseTasks($priorities,'Priority deleted successfully',200);
+    }
+
 
 
     }
