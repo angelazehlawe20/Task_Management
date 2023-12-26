@@ -34,6 +34,26 @@ class PriorityController extends Controller
         return $this->ResponseTasks($sortedPri,'All priorities by '.$sortBy.':',200);
 
     }
+    public function createPriority(Request $request)
+{
+    try {
+        $validatedData = $request->validate([
+            'name' => 'required|string',
+            'description' => 'required|string',
+            'order' => 'required|string|in:high,medium,low',
+            'color_or_mark' => 'required|string|in:#FF0000,#FFFF00,#00FF00'
+        ]);
+    } catch (ValidationException $e) {
+        return $this->ResponseTasksErrors('Please ensure the accuracy of the provided information and fill in the required fields', 400);
+    }
+
+    $priority = Priority::create($validatedData);
+
+    return $this->ResponseTasks($priority, 'Priority created successfully', 201);
+}
+
+
+
 
     public function updatePriority(Request $request, Priority $priority){
         try {
