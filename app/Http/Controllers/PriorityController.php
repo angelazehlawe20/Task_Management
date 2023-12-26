@@ -38,17 +38,16 @@ class PriorityController extends Controller
         $priorityUpd = Priority::find($priority_id);
 
         if (!$priority) {
-            return response()->json(['message' => 'Priority not found'], 404);
+            return $this->ResponseTasksErrors('Priority not found', 404);
         }
 
-        $priority->name = $request->input('name'); // تحديث الاسم
-        $priority->description = $request->input('description'); // تحديث الوصف
+        $priorityUpd->name = $request->input('name');
+        $priorityUpd->description = $request->input('description');
 
-        $priority->save();
+        $priorityUpd->save();
 
-        return response()->json(['message' => 'Priority updated successfully'], 200);
+        return $this->ResponseTasks($priorityUpd,'Priority updated successfully', 200);
     }
     }
 
 
-}
