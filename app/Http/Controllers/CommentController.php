@@ -83,27 +83,27 @@ public function getAllSorted(Request $request){
 
                 return $this->ResponseTasksErrors('Please ensure the accuracy of the provided information and fill in the required fields',400);
             }
-            $commentId = Comment::findOrFail($validatedData['id']);
-            if(!$commentId) {
-                return $this->ResponseTasksErrors('Comment not found', 404);
-            }
 
-            $commentId->update($request->except('id'));
+            $task = Comment::find($validatedData['id']);
+            if($task){
+            $task->update($request->except('id'));
 
-            $commentId->setVisible([
+            $task->setVisible([
                 'id',
-                'content',
+                'content'
             ]);
 
-            return $this->ResponseTasks($commentId,'Comment updated successfully',200);
+            return $this->ResponseTasks($task,'Task updated successfully',200);
+        }
+        return $this->ResponseTasksErrors('Comment not found',404);
     }
 
     public function deletComm(Request $request)
     {
         $comm_id=$request->input('id');
-        $commDel=Comment::findOrFail($comm_id);
+        $commDel=Comment::find($comm_id);
         if(!$commDel){
-            return $this->ResponseTasksErrors('Comment not found');
+            return $this->ResponseTasksErrors('Comment not found',404);
         }
         $commDel->delete();
         $comments=Comment::all();
