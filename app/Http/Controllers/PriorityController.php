@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Traits\GeneralTrait;
 use App\Models\Priority;
+use Dotenv\Exception\ValidationException;
 use Illuminate\Http\Request;
+use PhpParser\Node\Expr\Print_;
 
 class PriorityController extends Controller
 
@@ -33,21 +35,34 @@ class PriorityController extends Controller
 
     }
 
-    public function updatePriority(Request $request,Priority $priority){
-        $priority_id=$request->input('id');
-        $priorityUpd = Priority::find($priority_id);
-
-        if (!$priority) {
-            return $this->ResponseTasksErrors('Priority not found', 404);
+    public function updatePriority(Request $request, Priority $priority){
+        try {
+            $validatedData = $request->validate([
+                'id' => 'integer|required|exists:priorities,id',
+                'name' => 'string',
+                'description' => 'string',
+                'order' => 'string|in:high,medium,low',
+                'color_or_mark' => 'string|in:#FF0000,#FFFF00,#00FF00'
+            ]);
+        } catch (ValidationException $e) {
+            return $this->ResponseTasksErrors('Please ensure the accuracy of the provided information and fill in the required fields', 400);
         }
+        $priority=Priority::find($validatedData['id']);
 
-        $priorityUpd->name = $request->input('name');
-        $priorityUpd->description = $request->input('description');
+        $priority->update($request->except('id'));
 
-        $priorityUpd->save();
+        $priority->setVisible([
+            'id',
+            'name',
+            'description',
+            'order',
+            'color_or_mark']);
 
-        return $this->ResponseTasks($priorityUpd,'Priority updated successfully', 200);
+        return $this->ResponseTasks($priority,'Priority updated successfully', 200);
     }
+
+
+
     }
 
 
