@@ -83,4 +83,15 @@ public function updateUser(Request $request,User $user)
     $userUpd->update($request->except('id'));
     return $this->ResponseTasks($userUpd,'User updated successfully',200);
 }
+
+public function deleteUser(Request $request,User $user){
+    $userId=$request->input('id');
+    $usDel=User::find($userId)->get();
+    if(!$usDel){
+        return $this->ResponseTasksErrors('User not found',404);
+    }
+    $usDel->delete();
+    $usersSorted=User::all();
+    return $this->ResponseTasks($usDel,'User deleted successfully',200);
+}
 }
