@@ -58,7 +58,8 @@ public function createPriority(Request $request)
         ]);
 
         $order = $validatedData['order'];
-        $color = $this->getColorForOrder($order);
+        $request=$request;
+        $color = $this->getColorForOrder($request,$order);
 
         $priorityData = [
             'description' => $validatedData['description'],
