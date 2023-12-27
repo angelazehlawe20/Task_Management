@@ -145,9 +145,13 @@ $users = User::find($userId);
     if (!$users) {
         return $this->ResponseTasksErrors('User not found', 404);
     }
-    Task::where('user_id',$userId)->get();
-    Comment::where('user_id',$userId)->get();
-
+    $tasks=Task::where('user_id',$userId)->get();
+    $comments=Comment::where('user_id',$userId)->get();
+    $all= [
+        'tasks' => $tasks,
+        'comments' => $comments,
+    ];
+    return $this->ResponseTasks($all,'User '.$userId.' tasks and comments',200);
 }
     public function deleteUser(Request $request)
     {
