@@ -14,14 +14,16 @@ class Comment extends Model
         'addition_date'=> 'datetime'
     ];
 
-public function task()
+public function user()
     {
-        return $this->belongsTo(Comment::class, 'task_id');
+        return $this->belongsTo(User::class);
     }
-    public function date()
+    public function task()
     {
-        return $this->belongsTo(Date::class, 'addition_date_id');
+        return $this->belongsTo(Task::class);
     }
+
+
 
 
 }

@@ -45,12 +45,12 @@ class User extends Authenticatable
 
     public function task()
     {
-        return $this->hasMany(Task::class,'user_id');
+        return $this->hasMany(Task::class);
     }
 
     public function comment()
     {
-        return $this->hasMany(Comment::class,'user_id');
+        return $this->hasMany(Comment::class);
     }
 
 }

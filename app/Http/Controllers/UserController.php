@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Traits\GeneralTrait;
+use App\Models\Comment;
+use App\Models\Task;
 use App\Models\User;
 use Dotenv\Exception\ValidationException;
 use Exception;
@@ -84,14 +86,27 @@ public function updateUser(Request $request,User $user)
     return $this->ResponseTasks($userUpd,'User updated successfully',200);
 }
 
-public function deleteUser(Request $request,User $user){
-    $userId=$request->input('id');
-    $usDel=User::find($userId)->get();
-    if(!$usDel){
-        return $this->ResponseTasksErrors('User not found',404);
-    }
-    $usDel->delete();
-    $usersSorted=User::all();
-    return $this->ResponseTasks($usDel,'User deleted successfully',200);
+    public function deleteUser(Request $request)
+    {
+        $userId = $request->input('user_id');
+
+        $user = User::find($userId);
+
+        if (!$user) {
+            return $this->ResponseTasksErrors('User not found', 404);
+        }
+
+
+            Task::where('user_id', $userId)->delete();
+
+            // حذف المهام المرتبطة بالمستخدم
+            Comment::where('user_id', $userId)->delete();
+
+            // حذف المستخدم بعد حذف العلاقات
+            $user->delete();
+            $users=User::all();
+            return $this->ResponseTasks($users, 'User and associated records deleted successfully', 200);
+
+
 }
 }

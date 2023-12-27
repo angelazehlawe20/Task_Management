@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreign('task_id')->references('id')->on('tasks');
             $table->text('content');
             $table->dateTime('addition_date')->useCurrent();
-            $table->timestamps();
+            $table->timestamps(); 
         });
     }
 

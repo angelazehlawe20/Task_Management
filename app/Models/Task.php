@@ -14,11 +14,17 @@ class Task extends Model
 
     public function priority()
     {
-        return $this->belongsTo(Priority::class, 'priority_id');
+        return $this->belongsTo(Priority::class);
     }
 
     public function comments()
     {
         return $this->hasMany(Comment::class);
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
 }
