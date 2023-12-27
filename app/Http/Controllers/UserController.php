@@ -4,16 +4,30 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Traits\GeneralTrait;
 use App\Models\User;
+use GuzzleHttp\Psr7\Query;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
     use GeneralTrait;
 
-    public function getAll()
+    public function getAll(Request $request,User $user)
 {
-    $users = User::all();
-    return $this->ResponseTasks($users,'All users',200);
+    $sortBy=$request->input('sort_by','name');
+    $usr=User::query();
+    switch($sortBy){
+    case 'name':
+        $usr->orderBy('name');
+        break;
+    case 'id':
+        $usr->orderBy('id');
+        break;
+    default:
+        return $this->ResponseTasksErrors('Invalid sorting parameter', 400);
+        break;
+    }
+    $usersSorted = $usr->get();
+    return $this->ResponseTasks($usersSorted,'All users',200);
 }
 
 public function getOneUser(Request $request,User $user)
