@@ -6,7 +6,6 @@ use App\Http\Controllers\Traits\GeneralTrait;
 use App\Models\Priority;
 use Dotenv\Exception\ValidationException;
 use Illuminate\Http\Request;
-use PhpParser\Node\Expr\Print_;
 
 class PriorityController extends Controller
 
