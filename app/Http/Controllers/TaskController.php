@@ -55,13 +55,7 @@ class TaskController extends Controller
         return $this->ResponseTasksErrors('An error occurred while creating the task',500);
     }
 
-        $newTask = Task::create([
-            'user_id' => $validatedData['user_id'],
-            'priority_id' => $validatedData['priority_id'],
-            'title' => $validatedData['title'],
-            'description' => $validatedData['description'],
-            'due_date' => $validatedData['due_date'],
-        ]);
+        $newTask = Task::create($validatedData);
 
         return $this->ResponseTasks($newTask,'Task created successfully',201);
     }
