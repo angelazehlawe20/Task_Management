@@ -77,10 +77,10 @@ public function updateUser(Request $request,User $user)
         return $this->ResponseTasksErrors('Please ensure the accuracy of the provided information and fill in the required fields',400);
     }
     $userUpd=User::find($validatedData['id']);
-    if($userUpd->isEmpty()){
+    if(!$userUpd){
         return $this->ResponseTasksErrors('User not found',404);
     }
     $userUpd->update($request->except('id'));
-    return $this->ResponseTasks($userUpd,'User successfully',200);
+    return $this->ResponseTasks($userUpd,'User updated successfully',200);
 }
 }
