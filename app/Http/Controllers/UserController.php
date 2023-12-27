@@ -94,7 +94,7 @@ public function searchUsers(Request $request)
     if (empty($name) && empty($email)) {
         return $this->ResponseTasksErrors('Please provide search criteria', 400);
     }
-    
+
     $query = User::query();
 
     if ($name) {
@@ -112,6 +112,26 @@ public function searchUsers(Request $request)
 
     return $this->ResponseTasks($searchResult, 'Users matching the search criteria', 200);
 }
+
+public function updatePassword(Request $request, User $user)
+{
+    $validatedData = $request->validate([
+        'user_id' => 'required|integer|exists:users,id',
+        'password' => 'required|string|min:8',
+    ]);
+
+    $user = User::find($validatedData['user_id']);
+
+    if (!$user) {
+        return $this->ResponseTasksErrors('User not found', 404);
+    }
+
+    $user->password = bcrypt($validatedData['password']);
+    $user->save();
+
+    return $this->ResponseTasks($user, 'Password updated successfully', 200);
+}
+
 
 
     public function deleteUser(Request $request)
