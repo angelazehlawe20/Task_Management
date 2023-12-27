@@ -62,4 +62,25 @@ catch(Exception $e){
     $us=User::create($validatedData);
     return $this->ResponseTasks($us,'User created successfully',201);
 }
+
+public function updateUser(Request $request,User $user)
+{
+    try{
+        $validatedData=$request->validate([
+            'id' => 'integer|required|exists:users,id',
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8',
+        ]);
+    }
+    catch(ValidationException $e){
+        return $this->ResponseTasksErrors('Please ensure the accuracy of the provided information and fill in the required fields',400);
+    }
+    $userUpd=User::find($validatedData['id']);
+    if($userUpd->isEmpty()){
+        return $this->ResponseTasksErrors('User not found',404);
+    }
+    $userUpd->update($request->except('id'));
+    return $this->ResponseTasks($userUpd,'User successfully',200);
+}
 }
