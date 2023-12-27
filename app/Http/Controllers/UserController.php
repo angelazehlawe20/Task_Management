@@ -49,6 +49,6 @@ public function createUser(Request $request,User $user)
         'password' => 'required|string|min:8',
     ]);
     $us=User::create($validatedData);
-    return $this->ResponseTasks($us,'User created successfully');
+    return $this->ResponseTasks($us,'User created successfully',201);
 }
 }
