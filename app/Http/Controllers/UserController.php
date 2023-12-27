@@ -41,4 +41,14 @@ public function getOneUser(Request $request,User $user)
     return $this->ResponseTasks($oneUser,'User id '.$request->id,200);
 }
 
+public function createUser(Request $request,User $user)
+{
+    $validatedData=$request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|string|email|max:255|unique:users',
+        'password' => 'required|string|min:8',
+    ]);
+    $us=User::create($validatedData);
+    return $this->ResponseTasks($us,'User created successfully');
+}
 }
