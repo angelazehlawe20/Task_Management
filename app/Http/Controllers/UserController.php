@@ -137,8 +137,18 @@ public function updatePassword(Request $request, User $user)
     return $this->ResponseTasks($user, 'Password updated successfully', 200);
 }
 
+public function getTasksAndCommentS(Request $request,User $user){
 
+$userId=$request->input('user_id');
+$users = User::find($userId);
 
+    if (!$users) {
+        return $this->ResponseTasksErrors('User not found', 404);
+    }
+    Task::where('user_id',$userId)->get();
+    Comment::where('user_id',$userId)->get();
+
+}
     public function deleteUser(Request $request)
     {
         $userId = $request->input('user_id');
