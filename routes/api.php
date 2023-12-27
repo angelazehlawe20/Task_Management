@@ -50,3 +50,4 @@ Route::post('/deletPriority',[PriorityController::class,'deletPriority']);
               ////user
 Route::post('/getAllUsers',[UserController::class,'getAll']);
 Route::post('/getOneUser',[UserController::class,'getOneUser']);
+Route::post('/createUser',[UserController::class,'createUser']);
