@@ -41,7 +41,7 @@ Route::post('/deleteComment',[CommentController::class,'deletComm']);
 
                ///priority
 Route::post('/getSotedPriority',[PriorityController::class,'getAll']);
-Route::post('/getColorForOrder',[Priority::class,'getColorForOrder']);
+Route::post('/getColorForOrder',[PriorityController::class,'getColorForOrder']);
 Route::post('/createPriority',[PriorityController::class,'createPriority']);
 Route::post('/updatePriority',[PriorityController::class,'updatePriority']);
 Route::post('/deletPriority',[PriorityController::class,'deletPriority']);

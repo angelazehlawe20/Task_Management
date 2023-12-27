@@ -37,7 +37,7 @@ class PriorityController extends Controller
 
     protected function getColorForOrder(Request $request)
     {
-        $order=$request->input('order');
+        $order = $request->input('order');
         $priorityColors = [
             'high' => '#FF0000',
             'medium' => '#FFFF00',
@@ -61,7 +61,7 @@ class PriorityController extends Controller
             'description' => $validatedData['description'],
             'order' => $validatedData['order'],
             'color_or_mark' => $color,
-            'controller' => $this, 
+            'controller' => $this,
         ];
 
         $priority = Priority::create($priorityData);
@@ -73,40 +73,41 @@ class PriorityController extends Controller
 }
 
 
-    public function updatePriority(Request $request, Priority $priority){
-        try {
-            $validatedData = $request->validate([
-                'id' => 'integer|required|exists:priorities,id',
-                'description' => 'string',
-                'order' => 'string|in:high,medium,low',
-                'color_or_mark' => 'string|in:#FF0000,#FFFF00,#00FF00'
-            ]);
-        } catch (ValidationException $e) {
-            return $this->ResponseTasksErrors('Please ensure the accuracy of the provided information and fill in the required fields', 400);
-        }
-        $priority=Priority::find($validatedData['id']);
+public function updatePriority(Request $request, Priority $priority)
+{
+    try {
+        $validatedData = $request->validate([
+            'id' => 'integer|required|exists:priorities,id',
+            'description' => 'string',
+            'order' => 'string|in:high,medium,low',
+        ]);
 
-        $priority->update($request->except('id'));
+        $color = $this->getColorForOrder($validatedData['order']);
 
-        $priority->setVisible([
-            'id',
-            'description',
-            'order',
-            'color_or_mark']);
+        $priority->update([
+            'description' => $request->input('description', $priority->description),
+            'order' => $request->input('order', $priority->order),
+            'color_or_mark' => $color,
+        ]);
 
-        return $this->ResponseTasks($priority,'Priority updated successfully', 200);
+        $priority->setVisible(['id', 'description', 'order', 'color_or_mark']);
+
+        return $this->ResponseTasks($priority, 'Priority updated successfully', 200);
+    } catch (ValidationException $e) {
+        return $this->ResponseTasksErrors('Please ensure the accuracy of the provided information and fill in the required fields', 400);
     }
+}
 
-    public function deletPriority(Request $request,Priority $priority){
-        $prio_id=$request->input('id');
-        $prioDel=Priority::find($prio_id);
-        if(!$prioDel){
-            return $this->ResponseTasksErrors('Priority not found',404);
-        }
-        $prioDel->delete();
-        $priorities=Priority::all();
-        return $this->ResponseTasks($priorities,'Priority deleted successfully',200);
+public function deletPriority(Request $request, Priority $priority){
+    $prio_id = $request->input('id');
+    $prioDel = Priority::find($prio_id);
+    if (!$prioDel) {
+        return $this->ResponseTasksErrors('Priority not found', 404);
     }
+    $prioDel->delete();
+    $priorities = Priority::all();
+    return $this->ResponseTasks($priorities, 'Priority deleted successfully', 200);
+}
 
 
 
