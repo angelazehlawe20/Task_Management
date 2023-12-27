@@ -32,12 +32,13 @@ class UserController extends Controller
 
 public function getOneUser(Request $request,User $user)
 {
-    $u_id=$request->input('id');
-    $oneUser=User::where('id',$u_id)->get();
-    if(!$oneUser)
+
+    $oneUser=User::where('id',$request->id)->get();
+    if($oneUser->isEmpty())
     {
         return $this->ResponseTasksErrors('User not found',404);
     }
-    return $this->ResponseTasks($oneUser,'User id '.$u_id,200);
+    return $this->ResponseTasks($oneUser,'User id '.$request->id,200);
 }
+
 }
