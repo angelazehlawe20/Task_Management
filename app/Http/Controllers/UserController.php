@@ -137,7 +137,7 @@ public function updatePassword(Request $request, User $user)
     return $this->ResponseTasks($user, 'Password updated successfully', 200);
 }
 
-public function getTasksAndCommentS(Request $request,User $user){
+public function getTasksAndComments(Request $request,User $user){
 
 $userId=$request->input('user_id');
 $users = User::find($userId);

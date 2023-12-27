@@ -55,3 +55,4 @@ Route::post('/updateUser',[UserController::class,'updateUser']);
 Route::post('/updatePassword',[UserController::class,'updatePassword']);
 Route::post('/deleteUser',[UserController::class,'deleteUser']);
 Route::post('/searchUsers',[UserController::class,'searchUsers']);
+Route::post('/getTasksAndComments',[UserController::class,'getTasksAndComments']);
