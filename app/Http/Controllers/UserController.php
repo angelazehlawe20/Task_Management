@@ -86,6 +86,27 @@ public function updateUser(Request $request,User $user)
     return $this->ResponseTasks($userUpd,'User updated successfully',200);
 }
 
+public function searchUsers(Request $request)
+{
+    $name = $request->input('name');
+    $email = $request->input('email');
+
+    $query = User::query();
+
+    if ($name) {
+        $query->where('name', 'like', '%' . $name . '%');
+    }
+
+    if ($email) {
+        $query->where('email', 'like', '%' . $email . '%');
+    }
+
+    $searchResult = $query->get();
+
+    return $this->ResponseTasks($searchResult, 'Users matching the search criteria', 200);
+}
+
+
     public function deleteUser(Request $request)
     {
         $userId = $request->input('user_id');
@@ -96,13 +117,8 @@ public function updateUser(Request $request,User $user)
             return $this->ResponseTasksErrors('User not found', 404);
         }
 
-
             Task::where('user_id', $userId)->delete();
-
-            // حذف المهام المرتبطة بالمستخدم
             Comment::where('user_id', $userId)->delete();
-
-            // حذف المستخدم بعد حذف العلاقات
             $user->delete();
             $users=User::all();
             return $this->ResponseTasks($users, 'User and associated records deleted successfully', 200);
