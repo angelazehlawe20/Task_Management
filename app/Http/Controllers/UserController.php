@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Traits\GeneralTrait;
 use App\Models\User;
+use Dotenv\Exception\ValidationException;
+use Exception;
 use GuzzleHttp\Psr7\Query;
 use Illuminate\Http\Request;
 
@@ -43,11 +45,20 @@ public function getOneUser(Request $request,User $user)
 
 public function createUser(Request $request,User $user)
 {
+    try{
     $validatedData=$request->validate([
         'name' => 'required|string|max:255',
         'email' => 'required|string|email|max:255|unique:users',
         'password' => 'required|string|min:8',
     ]);
+}
+catch(ValidationException $e){
+    return $this->ResponseTasksErrors('Please ensure the accuracy of the provided information and fill in the required fields',400);
+}
+catch(Exception $e){
+    return $this->ResponseTasksErrors('An error occurred while creating the task',500);
+
+}
     $us=User::create($validatedData);
     return $this->ResponseTasks($us,'User created successfully',201);
 }
