@@ -10,6 +10,7 @@ use Dotenv\Exception\ValidationException;
 use Exception;
 use GuzzleHttp\Psr7\Query;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -117,7 +118,8 @@ public function updatePassword(Request $request, User $user)
 {
     $validatedData = $request->validate([
         'user_id' => 'required|integer|exists:users,id',
-        'password' => 'required|string|min:8',
+        'old_password' => 'required|string|min:8',
+        'new_password' => 'required|string|min:8',
     ]);
 
     $user = User::find($validatedData['user_id']);
@@ -126,7 +128,10 @@ public function updatePassword(Request $request, User $user)
         return $this->ResponseTasksErrors('User not found', 404);
     }
 
-    $user->password = bcrypt($validatedData['password']);
+    if (!Hash::check($validatedData['old_password'], $user->password)) {
+        return $this->ResponseTasksErrors('Invalid old password', 400);
+    }
+    $user->password = bcrypt($validatedData['new_password']);
     $user->save();
 
     return $this->ResponseTasks($user, 'Password updated successfully', 200);
