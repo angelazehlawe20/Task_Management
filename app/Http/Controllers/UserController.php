@@ -91,6 +91,10 @@ public function searchUsers(Request $request)
     $name = $request->input('name');
     $email = $request->input('email');
 
+    if (empty($name) && empty($email)) {
+        return $this->ResponseTasksErrors('Please provide search criteria', 400);
+    }
+    
     $query = User::query();
 
     if ($name) {
@@ -102,6 +106,9 @@ public function searchUsers(Request $request)
     }
 
     $searchResult = $query->get();
+    if($searchResult->isEmpty()){
+        return $this->ResponseTasksErrors('No users found',404);
+    }
 
     return $this->ResponseTasks($searchResult, 'Users matching the search criteria', 200);
 }

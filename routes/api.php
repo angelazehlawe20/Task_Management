@@ -53,3 +53,4 @@ Route::post('/getOneUser',[UserController::class,'getOneUser']);
 Route::post('/createUser',[UserController::class,'createUser']);
 Route::post('/updateUser',[UserController::class,'updateUser']);
 Route::post('/deleteUser',[UserController::class,'deleteUser']);
+Route::post('/searchUsers',[UserController::class,'searchUsers']);
