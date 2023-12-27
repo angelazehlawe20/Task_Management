@@ -15,14 +15,16 @@ class Priority extends Model
     {
         return $this->hasMany(Task::class,'priority_id');
     }
+    protected static function boot()
+    {
+        parent::boot();
 
-    const HIGH = 'high';
-    const MEDIUM = 'medium';
-    const LOW = 'low';
+        static::creating(function ($priority) {
+            $controller = $priority->controller; 
+            $color = $controller->getColorForOrder($priority->order);
 
-    const COLORS = [
-        self::HIGH => '#FF0000',
-        self::MEDIUM => '#FFFF00',
-        self::LOW => '#00FF00',
-    ];
+            $priority->color_or_mark = $color;
+        });
+    }
+
 }

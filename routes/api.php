@@ -3,6 +3,7 @@
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PriorityController;
 use App\Http\Controllers\TaskController;
+use App\Models\Priority;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -40,6 +41,7 @@ Route::post('/deleteComment',[CommentController::class,'deletComm']);
 
                ///priority
 Route::post('/getSotedPriority',[PriorityController::class,'getAll']);
+Route::post('/getColorForOrder',[Priority::class,'getColorForOrder']);
 Route::post('/createPriority',[PriorityController::class,'createPriority']);
 Route::post('/updatePriority',[PriorityController::class,'updatePriority']);
 Route::post('/deletPriority',[PriorityController::class,'deletPriority']);

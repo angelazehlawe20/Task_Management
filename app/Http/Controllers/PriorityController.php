@@ -34,24 +34,43 @@ class PriorityController extends Controller
         return $this->ResponseTasks($sortedPri,'All priorities by '.$sortBy.':',200);
 
     }
+
+    protected function getColorForOrder(Request $request)
+    {
+        $order=$request->input('order');
+        $priorityColors = [
+            'high' => '#FF0000',
+            'medium' => '#FFFF00',
+            'low' => '#00FF00'
+        ];
+
+        return $priorityColors[$order] ?? '#FFFFFF';
+    }
+
     public function createPriority(Request $request)
 {
     try {
         $validatedData = $request->validate([
             'description' => 'required|string',
             'order' => 'required|string|in:high,medium,low',
-            'color_or_mark' => 'required|string|in:#FF0000,#FFFF00,#00FF00'
         ]);
+
+        $color = $this->getColorForOrder($validatedData['order']);
+
+        $priorityData = [
+            'description' => $validatedData['description'],
+            'order' => $validatedData['order'],
+            'color_or_mark' => $color,
+            'controller' => $this, 
+        ];
+
+        $priority = Priority::create($priorityData);
+
+        return $this->ResponseTasks($priority, 'Priority created successfully', 201);
     } catch (ValidationException $e) {
         return $this->ResponseTasksErrors('Please ensure the accuracy of the provided information and fill in the required fields', 400);
     }
-
-    $priority = Priority::create($validatedData);
-
-    return $this->ResponseTasks($priority, 'Priority created successfully', 201);
 }
-
-
 
 
     public function updatePriority(Request $request, Priority $priority){
