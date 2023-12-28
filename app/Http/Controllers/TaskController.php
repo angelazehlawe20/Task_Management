@@ -3,13 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Traits\GeneralTrait;
-use App\Models\Priority;
+use App\Models\Comment;
 use App\Models\Task;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
-use function PHPUnit\Framework\isEmpty;
 
 class TaskController extends Controller
 {
@@ -62,7 +61,7 @@ class TaskController extends Controller
         if (array_key_exists($priority, $priorityColors)) {
             return $priorityColors[$priority];
         }
-        return $this->ResponseTasksErrors('Color of this '.$priority.' priority not found',404);
+        return $this->ResponseTasksErrors('Color of '.$priority.' priority not found',404);
     }
 
     public function createTask(Request $request)
@@ -81,16 +80,20 @@ class TaskController extends Controller
             return $this->ResponseTasksErrors('An error occurred while creating the task', 500);
         }
 
+        try{
         $newTask = Task::create($validatedData);
 
         return $this->ResponseTasks($newTask,'Task created successfully', 201);
     }
-
+    catch (\Exception $e) {
+        return $this->ResponseTasksErrors('Failed to create task. Please try again.', 500);
+    }
+}
 
 
     public function show(Request $request,Task $task)
     {
-        $one=Task::where('title',$request->title)->get();
+        $one=Task::where('id',$request->id)->get();
         if($one->isEmpty())
         {
             return $this->ResponseTasksErrors('Task not found',404);
@@ -99,55 +102,77 @@ class TaskController extends Controller
     }
 
 
-    public function update(Request $request, Task $task)
+    public function updateTask(Request $request, Task $task)
+    {
+
+        try{
+            $validatedData=$request->validate([
+                'id' => 'integer',
+                'priority' => 'string|in:high,medium,low',
+                'title' => 'string',
+                'description' => 'string',
+                'due_date' => 'date_format:Y-m-d h:i:s',
+                'status'=> 'string|in:COMPLETED,IN_PROGRESS,PENDING'
+            ]);
+        }
+        catch (ValidationException $e) {
+            return $this->ResponseTasksErrors('Please ensure the accuracy of the provided information and fill in the required fields', 400);
+        } catch (Exception $e) {
+            return $this->ResponseTasksErrors('An error occurred while updating the task', 500);
+        }
+        $taskk=Task::find($validatedData['id']);
+        if(!$taskk){
+            return $this->ResponseTasksErrors('Task not found',404);
+        }
+            $taskk->update($validatedData);
+            return $this->ResponseTasks($taskk,'Task updated successfully',200);
+        }
+
+
+
+public function updateStatus(Request $request)
 {
     try{
     $validatedData = $request->validate([
-        'id' => 'integer|required|exists:tasks,id',
-        'priority_id' => 'integer|exists:priorities,id',
-        'title' => 'string',
-        'description' => 'string',
-        'status' => 'integer|in:1,2,3',
-        'due_date' => 'date_format:Y-m-d'
+        'id' => 'required',
+        'status' => 'required|string|in:COMPLETED,IN_PROGRESS,PENDING'
     ]);
 }
-    catch(ValidationException $e){
-
-        return $this->ResponseTasksErrors('Please ensure the accuracy of the provided information and fill in the required fields',400);
+catch (ValidationException $e) {
+    return $this->ResponseTasksErrors('Please ensure the accuracy of the provided information and fill in the required fields', 400);
+} catch (Exception $e) {
+    return $this->ResponseTasksErrors('An error occurred while updating the task', 500);
+}
+    $task = Task::where('id', $validatedData['id'])->first();
+    if(!$task){
+        return $this->ResponseTasksErrors('Task not found',404);
     }
+    $task->update(['status' => $validatedData['status']]);
 
-    $task = Task::findOrFail($validatedData['id']);
-    $task->status = $request->input('status');
-    $task->update($request->except('id'));
+    return $this->ResponseTasks($task, 'Status changed successfully', 200);
 
-    $task->setVisible([
-        'id',
-        'user_id',
-        'priority_id',
-        'title',
-        'description',
-        'due_date',
-        'status'
-    ]);
-
-    return $this->ResponseTasks($task,'Task updated successfully',200);
 }
 
-public function delete(Request $request) {
-    $task_id = $request->id;
+public function delete(Request $request)
+{
+        $task_id = $request->id;
 
-    $task = Task::find($task_id);
+        $task = Task::find($task_id);
 
-    if (!$task) {
-        return $this->ResponseTasksErrors('Task not found', 404);
+        if (!$task) {
+            return $this->ResponseTasksErrors('Task not found', 404);
+        }
+
+    Comment::where('task_id',$task_id)->delete();
+        $task->delete();
+
+        $tasks = Task::all();
+
+        return $this->ResponseTasks($tasks, 'Task deleted successfully', 200);
     }
 
-    $task->delete();
 
-    $tasks = Task::all();
 
-    return $this->ResponseTasks($tasks, 'Task deleted successfully', 200);
-}
 
 
    public function showStatus(Request $request)
