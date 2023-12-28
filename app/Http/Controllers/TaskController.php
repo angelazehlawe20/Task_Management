@@ -52,17 +52,17 @@ class TaskController extends Controller
 
     protected function getColorForPriority(Request $request)
     {
-        $order = $request->input('order');
+        $priority = $request->input('priority');
         $priorityColors = [
             'high' => '#FF0000',
             'medium' => '#FFFF00',
             'low' => '#00FF00'
         ];
 
-        if (array_key_exists($order, $priorityColors)) {
-            return $priorityColors[$order];
+        if (array_key_exists($priority, $priorityColors)) {
+            return $priorityColors[$priority];
         }
-        return $this->ResponseTasksErrors('Color of this '.$order.' priority not found',404);
+        return $this->ResponseTasksErrors('Color of this '.$priority.' priority not found',404);
     }
 
     public function createTask(Request $request)
@@ -70,10 +70,10 @@ class TaskController extends Controller
         try {
             $validatedData = $request->validate([
                 'user_id' => 'required|exists:users,id',
-                'priority_id' => 'required|exists:priorities,id',
+                'priority' => 'required|in:high,medium,low',
                 'title' => 'required|string',
                 'description' => 'string',
-                'due_date' => 'required|date_format:Y-m-d'
+                'due_date' => 'required|date_format:Y-m-d h:i:s'
             ]);
         } catch (ValidationException $e) {
             return $this->ResponseTasksErrors('Please ensure the accuracy of the provided information and fill in the required fields', 400);
