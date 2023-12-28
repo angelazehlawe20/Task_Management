@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Traits\GeneralTrait;
+use App\Models\Priority;
 use App\Models\Task;
 use Exception;
 use Illuminate\Http\Request;
@@ -36,29 +37,48 @@ class TaskController extends Controller
         return $this->ResponseTasks($sortedTasks,'All tasks by '.$sortBy.':',200);
     }
 
-
-    public function newTask(Request $request)
+    protected function getColorForPriority(Request $request)
     {
-        try{
-        $validatedData = $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'priority_id' => 'required|exists:priorities,id',
-            'title' => 'required|string',
-            'description' => 'string',
-            'due_date' => 'required|date_format:Y-m-d'
-        ]);
+        $order = $request->input('order');
+        $priorityColors = [
+            'high' => '#FF0000',
+            'medium' => '#FFFF00',
+            'low' => '#00FF00'
+        ];
+
+        if (array_key_exists($order, $priorityColors)) {
+            return $priorityColors[$order];
+        }
+        return $this->ResponseTasksErrors('Color of this '.$order.' priority not found',404);
     }
-    catch(ValidationException $e){
-        return $this->ResponseTasksErrors('Please ensure the accuracy of the provided information and fill in the required fields',400);
-    }
-    catch(Exception $e){
-        return $this->ResponseTasksErrors('An error occurred while creating the task',500);
-    }
+
+    public function createTask(Request $request)
+    {
+        try {
+            $validatedData = $request->validate([
+                'user_id' => 'required|exists:users,id',
+                'priority_id' => 'required|exists:priorities,id',
+                'title' => 'required|string',
+                'description' => 'string',
+                'due_date' => 'required|date_format:Y-m-d'
+            ]);
+        } catch (ValidationException $e) {
+            return $this->ResponseTasksErrors('Please ensure the accuracy of the provided information and fill in the required fields', 400);
+        } catch (Exception $e) {
+            return $this->ResponseTasksErrors('An error occurred while creating the task', 500);
+        }
 
         $newTask = Task::create($validatedData);
 
-        return $this->ResponseTasks($newTask,'Task created successfully',201);
+        // استرجاع معلومات الأولوية المرتبطة بالمهمة الجديدة
+        $priorityInfo = Priority::find($validatedData['priority_id']);
+
+        return $this->ResponseTasks([
+            'task' => $newTask,
+            'priority_info' => $priorityInfo, // يحتوي على معلومات الأولوية
+        ], 'Task created successfully', 201);
     }
+
 
 
     public function show(Request $request,Task $task)

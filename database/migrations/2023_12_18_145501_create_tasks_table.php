@@ -15,13 +15,12 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
-            $table->unsignedBigInteger('priority_id');
-            $table->foreign('priority_id')->references('id')->on('priorities');
+            $table->enum('priority', ['high', 'medium', 'low']);
             $table->string('title');
             $table->string('description');
             $table->date('due_date');
             $table->enum('status', ['COMPLETED', 'IN_PROGRESS', 'PENDING'])->default('PENDING');
-            $table->timestamps(); 
+            $table->timestamps();
         });
     }
 

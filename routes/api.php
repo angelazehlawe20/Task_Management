@@ -24,7 +24,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
              /////Task
 Route::post('/orderByAll',[TaskController::class,'getSortedTasks']);
-Route::post('/addNew',[TaskController::class,'newTask']);
+Route::post('/addNew',[TaskController::class,'createTask']);
 Route::post('/showTask',[TaskController::class,'show']);
 Route::post('/updateTask',[TaskController::class,'update']);
 Route::post('/deleteTask',[TaskController::class,'delete']);

@@ -8,7 +8,6 @@ use App\Models\Task;
 use App\Models\User;
 use Dotenv\Exception\ValidationException;
 use Exception;
-use GuzzleHttp\Psr7\Query;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
