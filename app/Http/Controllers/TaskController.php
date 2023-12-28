@@ -83,13 +83,7 @@ class TaskController extends Controller
 
         $newTask = Task::create($validatedData);
 
-        // استرجاع معلومات الأولوية المرتبطة بالمهمة الجديدة
-        $priorityInfo = Priority::find($validatedData['priority_id']);
-
-        return $this->ResponseTasks([
-            'task' => $newTask,
-            'priority_info' => $priorityInfo, // يحتوي على معلومات الأولوية
-        ], 'Task created successfully', 201);
+        return $this->ResponseTasks($newTask,'Task created successfully', 201);
     }
 
 
