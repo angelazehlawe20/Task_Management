@@ -11,12 +11,6 @@ class Task extends Model
     protected $table='tasks';
     protected $fillable=['user_id','priority_id','title','description','status','due_date'];
 
-
-    public function priority()
-    {
-        return $this->belongsTo(Priority::class);
-    }
-
     public function comments()
     {
         return $this->hasMany(Comment::class);
