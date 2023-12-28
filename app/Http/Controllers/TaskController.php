@@ -17,24 +17,37 @@ class TaskController extends Controller
 
     public function getSortedTasks(Request $request)
     {
-        $sortBy=$request->input('sort_by','priority');
-        $tasks=Task::with(['priority']);
+        $sortBy = $request->input('sort_by');
+
+        $validSortOptions = ['priority', 'date', 'name','status'];
+
+        if (!in_array($sortBy, $validSortOptions)) {
+            return $this->ResponseTasksErrors('Invalid sorting parameter', 400);
+        }
+
+        $tasks = Task::query();
+
         switch ($sortBy) {
             case 'priority':
-                $tasks->orderBy('priority_id')->orderBy('due_date');
+                $tasks->orderBy('priority')->orderBy('due_date');
                 break;
             case 'date':
-                $tasks->orderBy('due_date')->orderBy('priority_id');
+                $tasks->orderBy('due_date')->orderBy('priority');
                 break;
             case 'name':
                 $tasks->orderBy('title');
                 break;
+            case 'status':
+                $tasks->orderBy('status');
+                break;
             default:
-                return $this->ResponseTasksErrors('Invalid sorting parameter', 400);
+               return $this->ResponseTasksErrors('Invalid sorting parameter', 400);
                 break;
         }
-        $sortedTasks=$tasks->get();
-        return $this->ResponseTasks($sortedTasks,'All tasks by '.$sortBy.':',200);
+
+        $sortedTasks = $tasks->get();
+
+        return $this->ResponseTasks($sortedTasks,'All tasks sorted by ' . $sortBy, 200);
     }
 
     protected function getColorForPriority(Request $request)
