@@ -25,6 +25,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
              /////Task
 Route::post('/orderByAll',[TaskController::class,'getSortedTasks']);
 Route::post('/addNew',[TaskController::class,'createTask']);
+Route::post('/getColorForOrder',[TaskController::class,'getColorForPriority']);
 Route::post('/showTask',[TaskController::class,'show']);
 Route::post('/updateTask',[TaskController::class,'update']);
 Route::post('/deleteTask',[TaskController::class,'delete']);
@@ -38,13 +39,6 @@ Route::post('/commOfTask',[CommentController::class,'getCommOfTask']);
 Route::post('/updateComment',[CommentController::class,'updateComment']);
 Route::post('/getUserComments',[CommentController::class,'getUserComments']);
 Route::post('/deleteComment',[CommentController::class,'deletComm']);
-
-               ///priority
-Route::post('/getSotedPriority',[PriorityController::class,'getAll']);
-Route::post('/getColorForOrder',[PriorityController::class,'getColorForOrder']);
-Route::post('/createPriority',[PriorityController::class,'createPriority']);
-Route::post('/updatePriority',[PriorityController::class,'updatePriority']);
-Route::post('/deletPriority',[PriorityController::class,'deletPriority']);
 
               ////user
 Route::post('/getAllUsers',[UserController::class,'getAll']);
