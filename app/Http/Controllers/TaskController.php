@@ -208,7 +208,7 @@ public function deleteTask(Request $request)
         return $this->ResponseTasks($tasks, 'Task deleted successfully', 200);
     }
     catch(Exception $e){
-        return $this->ResponseTasksErrors('Task not found',404);
+        return $this->ResponseTasksErrors('Task not found');
     }
 }
 
