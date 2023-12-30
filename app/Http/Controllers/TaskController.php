@@ -49,7 +49,7 @@ class TaskController extends Controller
         return $this->ResponseTasks($sortedTasks,'All tasks sorted by ' . $sortBy, 200);
     }
 
-    protected function getColorForPriority(Request $request,$priority)
+    protected function getColorForPriority(Request $request)
     {
         $priority=$request->input('priority');
         $priorityColors = [
@@ -132,7 +132,18 @@ class TaskController extends Controller
         if(!$taskk){
             return $this->ResponseTasksErrors('Task not found',404);
         }
-            $taskk->update($validatedData);
+            $priority=$request->input('priority');
+            $color=$this->getColorForPriority($request,$priority);
+            $taskk->update([
+            'id' => $validatedData['id'],
+            'priority' => $validatedData['priority'],
+            'title' => $validatedData['title'],
+            'description' => $validatedData['description'],
+            'due_date' => $validatedData['due_date'],
+            'status' =>$validatedData['status'],
+            'color' => $color,
+            ]);
+
             return $this->ResponseTasks($taskk,'Task updated successfully',200);
         }
 
