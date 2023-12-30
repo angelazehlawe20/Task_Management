@@ -183,7 +183,7 @@ public function searchTask(Request $request)
     $title=$request->input('title');
     $query=Task::query();
     if($title){
-        $query->where('name','like','%'.$title.'%');
+        $query->where('title','like','%'.$title.'%');
     }
     $seachData=$query->get();
     if($seachData->isEmpty()){
