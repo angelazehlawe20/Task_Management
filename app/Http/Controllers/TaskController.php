@@ -255,6 +255,20 @@ public function deleteTask(Request $request)
                 }
                 return $this->ResponseTasks($tasks,'Tasks expected to be completed today',200);
             }
+
+
+            public function taskTime(Request $request){
+                $time=now()->toTimeString();
+                $task=Task::where('user_id',$request->user_id)->whereTime('task_time',$time)->get();
+                $user=User::find($request->user_id);
+                if(!$user){
+                    return $this->ResponseTasksErrors('User not found',404);
+                }
+                if($task->isEmpty()){
+                    return $this->ResponseTasksErrors('Tasks expected to be completed now not found',404);
+                }
+                return $this->ResponseTasks($task,'Tasks expected to be completed now',200);
+            }
 }
 
 
