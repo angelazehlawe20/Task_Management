@@ -77,7 +77,8 @@ class TaskController extends Controller
                 'title' => 'required|string',
                 'description' => 'string',
                 'due_date' => 'required|date_format:Y-m-d',
-                'task_time' => 'required|date_format:H:i:s'
+                'task_time' => 'required|date_format:H:i:s',
+
             ]);
         } catch (ValidationException $e) {
             return $this->ResponseTasksErrors('Please ensure the accuracy of the provided information and fill in the required fields', 400);
@@ -207,14 +208,11 @@ public function deleteTask(Request $request)
         $task = Task::findOrFail($task_id);
 
         Comment::where('task_id',$task_id)->delete();
-        $task->delete();
-
-        $tasks = Task::all();
-
-        return $this->ResponseTasks($tasks, 'Task deleted successfully', 200);
+        $tasks=$task->delete();
+        return $this->ResponseTasks('Task deleted successfully', 200);
     }
     catch(Exception $e){
-        return $this->ResponseTasksErrors('Task not found');
+        return $this->ResponseTasksErrors('Task not found',404);
     }
 }
 
