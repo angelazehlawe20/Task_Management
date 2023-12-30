@@ -165,14 +165,16 @@ catch (ValidationException $e) {
 } catch (Exception $e) {
     return $this->ResponseTasksErrors('An error occurred while updating the task', 500);
 }
-    $task = Task::where('id', $validatedData['id'])->first();
-    if(!$task){
-        return $this->ResponseTasksErrors('Task not found',404);
-    }
+    try{
+    $task = Task::findOrFail($validatedData['id']);
+
     $task->update(['status' => $validatedData['status']]);
 
     return $this->ResponseTasks($task, 'Status changed successfully', 200);
-
+}
+catch(Exception $e){
+    return $this->ResponseTasksErrors('Task not found',404);
+}
 }
 
 
