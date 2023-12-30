@@ -219,25 +219,23 @@ public function deleteTask(Request $request)
     {
             $stat = $request->input('status');
 
-            $statusMap = [
-                'COMPLETED' => 1,
-                'IN_PROGRESS' => 2,
-                'PENDING' => 3
+            $validStatuses = [
+                'COMPLETED',
+                'IN_PROGRESS',
+                'PENDING'
             ];
 
-            if (array_key_exists($stat, $statusMap)) {
-                $taskStat = Task::where('status', $statusMap[$stat])->get();
-                if ($taskStat->count() > 0)
+            if (!in_array($stat, $validStatuses)) {
+                return $this->ResponseTasksErrors('Status '.$stat.' not found',404);
+            }
+                $taskStat = Task::where('status', $stat)->get();
+                if ($taskStat->isNotEmpty())
                 {
                     return $this->ResponseTasks($taskStat,'Tasks with status '.$stat.' retrieved successfully',200);
                 }
-                return $this->ResponseTasksErrors('No tasks found for the selected status',404);
+                return $this->ResponseTasksErrors('No tasks found for '.$stat.' status',404);
             }
-            else
-             {
-                return $this->ResponseTasksErrors('Status '.$stat.' not found',404);
-            }
-        }
+
 
 }
 
