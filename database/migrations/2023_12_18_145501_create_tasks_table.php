@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('title');
             $table->string('description');
             $table->date('due_date');
-            $table->time('task_time');
+            $table->time('task_time')->default(now()->format('H:i:s'));
             $table->enum('status', ['COMPLETED', 'IN_PROGRESS', 'PENDING'])->default('PENDING');
             $table->timestamps();
         });

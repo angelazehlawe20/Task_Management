@@ -77,7 +77,7 @@ class TaskController extends Controller
                 'title' => 'required|string',
                 'description' => 'string',
                 'due_date' => 'required|date_format:Y-m-d',
-                'task_time' => 'required|date_format:h:i:s'
+                'task_time' => 'required|date_format:H:i:s'
             ]);
         } catch (ValidationException $e) {
             return $this->ResponseTasksErrors('Please ensure the accuracy of the provided information and fill in the required fields', 400);
@@ -257,18 +257,29 @@ public function deleteTask(Request $request)
             }
 
 
-            public function taskTime(Request $request){
-                $time=now()->toTimeString();
-                $task=Task::where('user_id',$request->user_id)->whereTime('task_time',$time)->get();
-                $user=User::find($request->user_id);
+            public function taskTime(Request $request)
+            {
+                $user = User::find($request->user_id);
                 if(!$user){
                     return $this->ResponseTasksErrors('User not found',404);
                 }
-                if($task->isEmpty()){
-                    return $this->ResponseTasksErrors('Tasks expected to be completed now not found',404);
+
+                $currentTime = now();
+                $oneMinuteAgo = $currentTime->subMinute();
+                $oneMinuteLater = $currentTime->addMinute();
+
+                $tasks = Task::where('user_id', $request->user_id)
+                             ->whereTime('task_time', '>=', $oneMinuteAgo->toTimeString())
+                             ->whereTime('task_time', '<=', $oneMinuteLater->toTimeString())
+                             ->get();
+
+                if ($tasks->isEmpty()) {
+                    return $this->ResponseTasksErrors('Tasks expected to be completed now not found', 404);
                 }
-                return $this->ResponseTasks($task,'Tasks expected to be completed now',200);
+
+                return $this->ResponseTasks($tasks, 'Tasks expected to be completed now', 200);
             }
+
 }
 
 

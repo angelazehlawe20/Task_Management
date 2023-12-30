@@ -33,6 +33,8 @@ Route::post('/deleteTask',[TaskController::class,'deleteTask']);
 Route::post('/statusTask',[TaskController::class,'showStatus']);
 Route::post('/searchTask',[TaskController::class,'searchTask']);
 Route::post('/todayTask',[TaskController::class,'todayTask']);
+Route::post('/taskTime',[TaskController::class,'taskTime']);
+
 
                ////comment
 Route::post('/getSortedComments', [CommentController::class,'getAllSorted']);
