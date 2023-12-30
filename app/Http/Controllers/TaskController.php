@@ -6,6 +6,7 @@ use App\Http\Controllers\Traits\GeneralTrait;
 use App\Models\Comment;
 use App\Models\Task;
 use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
@@ -128,10 +129,8 @@ class TaskController extends Controller
         } catch (Exception $e) {
             return $this->ResponseTasksErrors('An error occurred while updating the task', 500);
         }
-        $taskk=Task::find($validatedData['id']);
-        if(!$taskk){
-            return $this->ResponseTasksErrors('Task not found',404);
-        }
+        try{
+        $taskk=Task::findOrFail($validatedData['id']);
             $priority=$request->input('priority');
             $color=$this->getColorForPriority($request,$priority);
             $taskk->update([
@@ -146,6 +145,10 @@ class TaskController extends Controller
 
             return $this->ResponseTasks($taskk,'Task updated successfully',200);
         }
+        catch (ModelNotFoundException $ex) {
+            return $this->ResponseTasksErrors('Task not found', 404);
+        }
+    }
 
 
 
