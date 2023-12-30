@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Traits\GeneralTrait;
 use App\Models\Comment;
 use App\Models\Task;
+use App\Models\User;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redis;
 use Illuminate\Validation\ValidationException;
 
 
@@ -32,7 +34,7 @@ class TaskController extends Controller
                 $tasks->orderBy('priority')->orderBy('due_date');
                 break;
             case 'date':
-                $tasks->orderBy('due_date')->orderBy('priority');
+                $tasks->orderBy('due_date')->orderBy('task_time')->orderBy('priority');
                 break;
             case 'name':
                 $tasks->orderBy('title');
@@ -74,7 +76,8 @@ class TaskController extends Controller
                 'priority' => 'required|in:high,medium,low',
                 'title' => 'required|string',
                 'description' => 'string',
-                'due_date' => 'required|date_format:Y-m-d h:i:s',
+                'due_date' => 'required|date_format:Y-m-d',
+                'task_time' => 'required|date_format:h:i:s'
             ]);
         } catch (ValidationException $e) {
             return $this->ResponseTasksErrors('Please ensure the accuracy of the provided information and fill in the required fields', 400);
@@ -90,6 +93,7 @@ class TaskController extends Controller
             'title' => $validatedData['title'],
             'description' => $validatedData['description'],
             'due_date' => $validatedData['due_date'],
+            'task_time' => $validatedData['task_time'],
             'color' => $color,
 
         ]);
@@ -120,7 +124,8 @@ class TaskController extends Controller
                 'priority' => 'string|in:high,medium,low',
                 'title' => 'string',
                 'description' => 'string',
-                'due_date' => 'date_format:Y-m-d h:i:s',
+                'due_date' => 'date_format:Y-m-d',
+                'task_time' => 'date_format:h:i:s',
                 'status'=> 'string|in:COMPLETED,IN_PROGRESS,PENDING'
             ]);
         }
@@ -139,6 +144,7 @@ class TaskController extends Controller
             'title' => $validatedData['title'],
             'description' => $validatedData['description'],
             'due_date' => $validatedData['due_date'],
+            'task_time' => $validatedData['task_time'],
             'status' =>$validatedData['status'],
             'color' => $color,
             ]);
@@ -237,6 +243,18 @@ public function deleteTask(Request $request)
             }
 
 
+            public function todayTask(Request $request){
+                $today=now()->toDateString();
+                $tasks=Task::where('user_id',$request->user_id)->where('due_date',$today)->get();
+                $us=User::find($request->user_id);
+                if(!$us){
+                    return $this->ResponseTasksErrors('User not found',404);
+                }
+                if($tasks->isEmpty()){
+                    return $this->ResponseTasksErrors('Tasks expected to be completed today not found', 404);
+                }
+                return $this->ResponseTasks($tasks,'Tasks expected to be completed today',200);
+            }
 }
 
 

@@ -19,7 +19,8 @@ return new class extends Migration
             $table->string('color')->default('#00000');
             $table->string('title');
             $table->string('description');
-            $table->dateTime('due_date');
+            $table->date('due_date');
+            $table->time('task_time');
             $table->enum('status', ['COMPLETED', 'IN_PROGRESS', 'PENDING'])->default('PENDING');
             $table->timestamps();
         });
