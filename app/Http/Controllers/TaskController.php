@@ -49,9 +49,9 @@ class TaskController extends Controller
         return $this->ResponseTasks($sortedTasks,'All tasks sorted by ' . $sortBy, 200);
     }
 
-    protected function getColorForPriority(Request $request)
+    protected function getColorForPriority(Request $request,$priority)
     {
-        $priority = $request->input('priority');
+        $priority=$request->input('priority');
         $priorityColors = [
             'high' => '#FF0000',
             'medium' => '#FFFF00',
@@ -64,6 +64,7 @@ class TaskController extends Controller
         return $this->ResponseTasksErrors('Color of '.$priority.' priority not found',404);
     }
 
+
     public function createTask(Request $request)
     {
         try {
@@ -72,7 +73,7 @@ class TaskController extends Controller
                 'priority' => 'required|in:high,medium,low',
                 'title' => 'required|string',
                 'description' => 'string',
-                'due_date' => 'required|date_format:Y-m-d h:i:s'
+                'due_date' => 'required|date_format:Y-m-d h:i:s',
             ]);
         } catch (ValidationException $e) {
             return $this->ResponseTasksErrors('Please ensure the accuracy of the provided information and fill in the required fields', 400);
@@ -80,15 +81,22 @@ class TaskController extends Controller
             return $this->ResponseTasksErrors('An error occurred while creating the task', 500);
         }
 
-        try{
-        $newTask = Task::create($validatedData);
+        $priority=$request->input('priority');
+        $color=$this->getColorForPriority($request,$priority);
+        $newTask = Task::create([
+            'user_id' => $validatedData['user_id'],
+            'priority' => $validatedData['priority'],
+            'title' => $validatedData['title'],
+            'description' => $validatedData['description'],
+            'due_date' => $validatedData['due_date'],
+            'color' => $color,
+
+        ]);
 
         return $this->ResponseTasks($newTask,'Task created successfully', 201);
     }
-    catch (\Exception $e) {
-        return $this->ResponseTasksErrors('Failed to create task. Please try again.', 500);
-    }
-}
+
+
 
 
     public function show(Request $request,Task $task)

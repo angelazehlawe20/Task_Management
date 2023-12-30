@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
             $table->enum('priority', ['high', 'medium', 'low']);
-            $table->string('color');
+            $table->string('color')->default('#00000');
             $table->string('title');
             $table->string('description');
             $table->dateTime('due_date');
