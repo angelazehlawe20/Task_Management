@@ -31,6 +31,7 @@ Route::post('/updateStatus',[TaskController::class,'updateStatus']);
 Route::post('/updateTask',[TaskController::class,'updateTask']);
 Route::post('/deleteTask',[TaskController::class,'delete']);
 Route::post('/statusTask',[TaskController::class,'showStatus']);
+Route::post('/searchTask',[TaskController::class,'searchTask']);
 
                ////comment
 Route::post('/getSortedComments', [CommentController::class,'getAllSorted']);
