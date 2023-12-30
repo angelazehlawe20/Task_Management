@@ -154,10 +154,20 @@ catch (ValidationException $e) {
 }
 
 
-public function searchTask()
+public function searchTask(Request $request)
 {
     $title=$request->input('title');
+    $query=Task::query();
+    if($title){
+        $query->where('name','like','%'.$title.'%');
+    }
+    $seachData=$query->get();
+    if($seachData->isEmpty()){
+        return $this->ResponseTasksErrors('Tasks not found',404);
+    }
+    return $this->ResponseTasks($seachData,'Tasks matching the search criteria',200);
 }
+
 
 public function delete(Request $request)
 {
