@@ -100,7 +100,7 @@ class TaskController extends Controller
 
 
 
-    public function show(Request $request,Task $task)
+    public function showTask(Request $request,Task $task)
     {
         $one=Task::where('id',$request->id)->get();
         if($one->isEmpty())
@@ -193,24 +193,24 @@ public function searchTask(Request $request)
 }
 
 
-public function delete(Request $request)
+public function deleteTask(Request $request)
 {
+        try{
         $task_id = $request->id;
 
-        $task = Task::find($task_id);
+        $task = Task::findOrFail($task_id);
 
-        if (!$task) {
-            return $this->ResponseTasksErrors('Task not found', 404);
-        }
-
-    Comment::where('task_id',$task_id)->delete();
+        Comment::where('task_id',$task_id)->delete();
         $task->delete();
 
         $tasks = Task::all();
 
         return $this->ResponseTasks($tasks, 'Task deleted successfully', 200);
     }
-
+    catch(Exception $e){
+        return $this->ResponseTasksErrors('Task not found',404);
+    }
+}
 
 
 
