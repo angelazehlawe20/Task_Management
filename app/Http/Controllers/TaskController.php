@@ -153,6 +153,12 @@ catch (ValidationException $e) {
 
 }
 
+
+public function searchTask()
+{
+    $title=$request->input('title');
+}
+
 public function delete(Request $request)
 {
         $task_id = $request->id;
