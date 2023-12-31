@@ -6,6 +6,7 @@ use App\Http\Controllers\Traits\GeneralTrait;
 use App\Models\Comment;
 use App\Models\Task;
 use App\Models\User;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -266,8 +267,8 @@ try{
     $tasks = Task::where('user_id', $user)
     ->where('status','=','IN_PROGRESS')
     ->whereDate('due_date', $currentTime->toDateString())
-    ->where('due_date', '>', $currentTime)
-    ->where('due_date', '<', $reminderTime)
+    ->whereTime('due_date', '>', $currentTime->toTimeString())
+    ->whereTime('due_date', '<', $reminderTime->toTimeString())
     ->get();
 
     return $this->ResponseTasks($tasks,'Only a 15 minutes remains to complete the task',200);
@@ -277,6 +278,24 @@ catch(Exception $e){
 }
 
 }
+
+public function fetchTasksToBeCompletedNow()
+{
+    $currentTime = now();
+
+    $tasks = Task::where('status', '=', 'IN_PROGRESS')
+        ->where('due_date', '=', $currentTime)
+        ->get();
+
+    return $tasks;
+}
+
+
+public function gh(Request $request){
+    $currentTime = Carbon::now()->setTimezone('Asia/Damascus');
+    return $currentTime;
+}
+
 
 }
 

@@ -34,6 +34,8 @@ Route::post('/statusTask',[TaskController::class,'showStatus']);
 Route::post('/searchTask',[TaskController::class,'searchTask']);
 Route::post('/todayTask',[TaskController::class,'todayTask']);
 Route::post('/remindTasks',[TaskController::class,'remindTasks']);
+Route::post('/fetchTasksToBeCompletedNow',[TaskController::class,'fetchTasksToBeCompletedNow']);
+
 
 
                ////comment
