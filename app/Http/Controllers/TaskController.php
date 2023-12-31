@@ -251,26 +251,33 @@ public function deleteTask(Request $request)
             }
 
 
-            public function remindTasks(Request $request)
+    public function remindTasks(Request $request)
 {
     $user=$request->input('user_id');
     $currentTime = now();
     $reminderTime = $currentTime->copy()->addMinutes(15);
 
+
+    $us=User::find($user);
+    if(!$us){
+        return $this->ResponseTasksErrors('User not found',404);
+    }
+try{
     $tasks = Task::where('user_id', $user)
+    ->where('status','=','IN_PROGRESS')
     ->whereDate('due_date', $currentTime->toDateString())
     ->where('due_date', '>', $currentTime)
     ->where('due_date', '<', $reminderTime)
     ->get();
 
-
     return $this->ResponseTasks($tasks,'Only a 15 minutes remains to complete the task',200);
 }
+catch(Exception $e){
+    return $this->ResponseTasksErrors('Task not found',404);
+}
 
+}
 
-
-
-        }
-
+}
 
 
