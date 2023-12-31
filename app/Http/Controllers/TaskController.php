@@ -75,8 +75,7 @@ class TaskController extends Controller
                 'priority' => 'required|in:high,medium,low',
                 'title' => 'required|string',
                 'description' => 'string',
-                'due_date' => 'required|date_format:Y-m-d',
-                'task_time' => 'required|date_format:H:i:s',
+                'due_date' => 'date_format:Y-m-d H:i',
 
             ]);
         } catch (ValidationException $e) {
@@ -93,7 +92,6 @@ class TaskController extends Controller
             'title' => $validatedData['title'],
             'description' => $validatedData['description'],
             'due_date' => $validatedData['due_date'],
-            'task_time' => $validatedData['task_time'],
             'color' => $color,
 
         ]);
@@ -125,7 +123,6 @@ class TaskController extends Controller
                 'title' => 'string',
                 'description' => 'string',
                 'due_date' => 'date_format:Y-m-d',
-                'task_time' => 'date_format:h:i:s',
                 'status'=> 'string|in:COMPLETED,IN_PROGRESS,PENDING'
             ]);
         }
@@ -144,7 +141,6 @@ class TaskController extends Controller
             'title' => $validatedData['title'],
             'description' => $validatedData['description'],
             'due_date' => $validatedData['due_date'],
-            'task_time' => $validatedData['task_time'],
             'status' =>$validatedData['status'],
             'color' => $color,
             ]);
@@ -241,8 +237,9 @@ public function deleteTask(Request $request)
 
 
             public function todayTask(Request $request){
+                $user=$request->input('user_id');
                 $today=now()->toDateString();
-                $tasks=Task::where('user_id',$request->user_id)->where('due_date',$today)->get();
+                $tasks = Task::where('user_id',$user)->whereDate('due_date', '=', $today)->get();
                 $us=User::find($request->user_id);
                 if(!$us){
                     return $this->ResponseTasksErrors('User not found',404);
@@ -254,30 +251,26 @@ public function deleteTask(Request $request)
             }
 
 
-            public function taskTime(Request $request)
-            {
-                $user = User::find($request->user_id);
-                if(!$user){
-                    return $this->ResponseTasksErrors('User not found',404);
-                }
+            public function remindTasks(Request $request)
+{
+    $user=$request->input('user_id');
+    $currentTime = now();
+    $reminderTime = $currentTime->copy()->addMinutes(15);
 
-                $currentTime = now();
-                $oneMinuteAgo = $currentTime->subMinute();
-                $oneMinuteLater = $currentTime->addMinute();
+    $tasks = Task::where('user_id', $user)
+    ->whereDate('due_date', $currentTime->toDateString())
+    ->where('due_date', '>', $currentTime)
+    ->where('due_date', '<', $reminderTime)
+    ->get();
 
-                $tasks = Task::where('user_id', $request->user_id)
-                             ->whereTime('task_time', '>=', $oneMinuteAgo->toTimeString())
-                             ->whereTime('task_time', '<=', $oneMinuteLater->toTimeString())
-                             ->get();
 
-                if ($tasks->isEmpty()) {
-                    return $this->ResponseTasksErrors('Tasks expected to be completed now not found', 404);
-                }
-
-                return $this->ResponseTasks($tasks, 'Tasks expected to be completed now', 200);
-            }
-
+    return $this->ResponseTasks($tasks,'Only a 15 minutes remains to complete the task',200);
 }
+
+
+
+
+        }
 
 
 

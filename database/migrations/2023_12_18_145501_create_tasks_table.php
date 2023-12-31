@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -19,8 +20,7 @@ return new class extends Migration
             $table->string('color')->default('#00000');
             $table->string('title');
             $table->string('description');
-            $table->date('due_date');
-            $table->time('task_time')->default(now()->format('H:i:s'));
+            $table->dateTime('due_date')->useCurrent();
             $table->enum('status', ['COMPLETED', 'IN_PROGRESS', 'PENDING'])->default('PENDING');
             $table->timestamps();
         });
