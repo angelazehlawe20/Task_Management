@@ -46,6 +46,10 @@ public function getSortedTasks(Request $request)
         }
 
         $sortedTasks = $tasks->get();
+        if($sortedTasks->isEmpty())
+        {
+            return $this->ResponseTasksErrors('There are no tasks',404);
+        }
 
         return $this->ResponseTasks($sortedTasks,'All tasks sorted by ' . $sortBy, 200);
     }
@@ -333,23 +337,25 @@ public function restoreTask(Request $request){
 public function showDeletedTasks(Request $request)
 {
     $sortBy=$request->input('sort_by');
-    $validateSort=['name','Deletion time'];
+    $validateSort=['name','Deletion_time'];
     if(!in_array($sortBy,$validateSort)){
         return $this->ResponseTasksErrors('Invalid sorting parameter',400);
     }
-    $deletedTasks=Task::query();
+    $deletedTasks=Task::onlyTrashed();
+
     switch($sortBy){
         case 'name':
-            $deletedTasks->orderBy('name');
+            $deletedTasks->orderBy('title');
             break;
-        case 'Deletion time':
+        case 'Deletion_time':
             $deletedTasks->orderBy('deleted_at');
+            break;
         default:
             return $this->ResponseTasksErrors('Invalid sorting parameter',400);
             break;
     }
-    $deletedTasks->get();
-    return $this->ResponseTasks($deletedTasks,'All deleted tasks',200);
+    $sortedTasks=$deletedTasks->get();
+    return $this->ResponseTasks($sortedTasks,'All deleted tasks sorted by ' . $sortBy,200);
 }
 
 }
