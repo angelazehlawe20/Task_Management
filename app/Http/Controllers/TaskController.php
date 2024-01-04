@@ -330,5 +330,26 @@ public function restoreTask(Request $request){
 }
 
 
+public function showDeletedTasks(Request $request)
+{
+    $sortBy=$request->input('sort_by');
+    $validateSort=['name','Deletion time'];
+    if(!in_array($sortBy,$validateSort)){
+        return $this->ResponseTasksErrors('Invalid sorting parameter',400);
+    }
+    $deletedTasks=Task::query();
+    switch($sortBy){
+        case 'name':
+            $deletedTasks->orderBy('name');
+            break;
+        case 'Deletion time':
+            $deletedTasks->orderBy('deleted_at');
+        default:
+            return $this->ResponseTasksErrors('Invalid sorting parameter',400);
+            break;
+    }
+    $deletedTasks->get();
+    return $this->ResponseTasks($deletedTasks,'All deleted tasks',200);
+}
 
 }
