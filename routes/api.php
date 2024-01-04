@@ -35,6 +35,7 @@ Route::post('/searchTask',[TaskController::class,'searchTask']);
 Route::post('/todayTask',[TaskController::class,'todayTask']);
 Route::post('/remindTasks',[TaskController::class,'remindTasks']);
 Route::post('/taskNow',[TaskController::class,'taskNow']);
+Route::post('/restoreTask',[TaskController::class,'restoreTask']);
 
 
 

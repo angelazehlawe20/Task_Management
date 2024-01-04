@@ -32,7 +32,7 @@ public function getSortedTasks(Request $request)
                 $tasks->orderBy('priority')->orderBy('due_date');
                 break;
             case 'date':
-                $tasks->orderBy('due_date')->orderBy('task_time')->orderBy('priority');
+                $tasks->orderBy('due_date')->orderBy('priority');
                 break;
             case 'name':
                 $tasks->orderBy('title');
@@ -208,7 +208,7 @@ public function deleteTask(Request $request)
 
         Comment::where('task_id',$task_id)->delete();
         $tasks=$task->delete();
-        return $this->ResponseTasks('Task deleted successfully', 200);
+        return $this->ResponseTasks(null,'Task deleted successfully',200);
     }
     catch(Exception $e){
         return $this->ResponseTasksErrors('Task not found',404);
@@ -313,6 +313,20 @@ public function taskNow(Request $request){
     } catch (Exception $e) {
         return $this->ResponseTasksErrors('An error occurred while processing tasks', 500);
     }
+}
+
+
+public function restoreTask(Request $request){
+
+    $task_id=$request->input('id');
+    $delTask=Task::withTrashed()->where('id',$task_id)->first();
+    if(!$delTask)
+    {
+        return $this->ResponseTasksErrors('Task not found',404);
+    }
+    $delTask->restore();
+    return $this->ResponseTasks($delTask,'Task restored successfully',200);
+
 }
 
 
