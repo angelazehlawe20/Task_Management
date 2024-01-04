@@ -6,7 +6,6 @@ use App\Http\Controllers\Traits\GeneralTrait;
 use App\Models\Comment;
 use App\Models\Task;
 use App\Models\User;
-use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -259,18 +258,21 @@ public function deleteTask(Request $request)
     $reminderTime = $currentTime->copy()->addMinutes(15);
 
 
-    $us=User::find($user);
-    if(!$us){
+        $userExistsInTasks = Task::where('user_id', $user)->exists();
+    if(!$userExistsInTasks){
         return $this->ResponseTasksErrors('User not found',404);
     }
 try{
     $tasks = Task::where('user_id', $user)
     ->where('status','=','IN_PROGRESS')
     ->whereDate('due_date', $currentTime->toDateString())
-    ->whereTime('due_date', '>', $currentTime->toTimeString())
-    ->whereTime('due_date', '<', $reminderTime->toTimeString())
+    ->whereTime('due_date', '>=', $currentTime->toTimeString())
+    ->whereTime('due_date', '=', $reminderTime->toTimeString())
     ->get();
 
+    if($tasks->isEmpty()){
+        return $this->ResponseTasksErrors('No tasks found within the expected time',404);
+    }
     return $this->ResponseTasks($tasks,'Only a 15 minutes remains to complete the task',200);
 }
 catch(Exception $e){
@@ -278,25 +280,30 @@ catch(Exception $e){
 }
 
 }
+public function taskNow(Request $request){
+    try {
+        $id = $request->input('user_id');
+        $userExistsInTasks = Task::where('user_id', $id)->exists();
 
-public function fetchTasksToBeCompletedNow()
-{
-    $currentTime = now();
+        if (!$userExistsInTasks) {
+            return $this->ResponseTasksErrors('User not found', 404);
+        }
 
-    $tasks = Task::where('status', '=', 'IN_PROGRESS')
-        ->where('due_date', '=', $currentTime)
-        ->get();
+        $currentTime = \Carbon\Carbon::now();
 
-    return $tasks;
+        $tasks = Task::where('user_id', $id)
+            ->where('status', '=', 'IN_PROGRESS')
+            ->where('due_date', '>=', $currentTime->subMinute())
+            ->where('due_date', '<=', $currentTime->addMinute())
+            ->get();
+
+        if ($tasks->isEmpty()) {
+            return $this->ResponseTasksErrors('No tasks found within the expected time', 404);
+        }
+
+        return $this->ResponseTasks($tasks, 'Tasks found within the expected time', 200);
+    } catch (Exception $e) {
+        return $this->ResponseTasksErrors('An error occurred while processing tasks', 500);
+    }
 }
-
-
-public function gh(Request $request){
-    $currentTime = Carbon::now()->setTimezone('Asia/Damascus');
-    return $currentTime;
 }
-
-
-}
-
-
