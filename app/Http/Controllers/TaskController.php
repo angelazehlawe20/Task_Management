@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Traits\GeneralTrait;
 use App\Models\Comment;
 use App\Models\Task;
+use App\Models\User;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
@@ -404,6 +405,18 @@ public function sharedTask(Request $request)
     } catch (QueryException $e) {
         return $this->ResponseTasksErrors('Task sharing failed', 500);
     }
+}
+
+
+public function getSharedTasks(Request $request)
+{
+    $user_id=$request->input('user_id');
+    $checkUser=User::find($user_id);
+    if(!$checkUser){
+        return $this->ResponseTasksErrors('User not found',404);
+    }
+    $checkUserr=$checkUser->sharedTasks;
+    return $this->ResponseTasks($checkUserr,'all tasks of user',200);
 }
 
 }

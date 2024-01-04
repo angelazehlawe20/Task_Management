@@ -39,6 +39,7 @@ Route::post('/restoreTask',[TaskController::class,'restoreTask']);
 Route::post('/showDeletedTasks',[TaskController::class,'showDeletedTasks']);
 Route::post('/forceDeleteTask',[TaskController::class,'forceDeleteTask']);
 Route::post('/sharedTask',[TaskController::class,'sharedTask']);
+Route::post('/getSharedTasks',[TaskController::class,'getSharedTasks']);
 
 
 
