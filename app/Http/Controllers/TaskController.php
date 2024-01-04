@@ -241,20 +241,20 @@ public function showStatus(Request $request)
 
 
 public function todayTask(Request $request){
-        $user=$request->input('user_id');
-        $today=now()->toDateString();
-        $tasks = Task::where('user_id',$user)->whereDate('due_date', '=', $today)->get();
-        $us = Task::where('user_id', $user)->exists();
-        if(!$us)
-        {
-            return $this->ResponseTasksErrors('User not found',404);
-        }
-        if($tasks->isEmpty())
-        {
-            return $this->ResponseTasksErrors('Tasks expected to be completed today not found', 404);
-        }
-            return $this->ResponseTasks($tasks,'Tasks expected to be completed today',200);
-        }
+    $user=$request->input('user_id');
+    $today=now()->toDateString();
+    $tasks = Task::where('user_id',$user)->whereDate('due_date', '=', $today)->get();
+    $us = Task::where('user_id', $user)->exists();
+    if(!$us)
+    {
+        return $this->ResponseTasksErrors('User not found',404);
+    }
+    if($tasks->isEmpty())
+    {
+        return $this->ResponseTasksErrors('Tasks expected to be completed today not found', 404);
+    }
+        return $this->ResponseTasks($tasks,'Tasks expected to be completed today',200);
+    }
 
 
 
@@ -314,4 +314,7 @@ public function taskNow(Request $request){
         return $this->ResponseTasksErrors('An error occurred while processing tasks', 500);
     }
 }
+
+
+
 }
