@@ -29,7 +29,7 @@ Route::post('/getColorForPriority',[TaskController::class,'getColorForPriority']
 Route::post('/showTask',[TaskController::class,'showTask']);
 Route::post('/updateStatus',[TaskController::class,'updateStatus']);
 Route::post('/updateTask',[TaskController::class,'updateTask']);
-Route::post('/deleteTask',[TaskController::class,'deleteTask']);
+Route::post('/softDeleteTask',[TaskController::class,'softDeleteTask']);
 Route::post('/statusTask',[TaskController::class,'showStatus']);
 Route::post('/searchTask',[TaskController::class,'searchTask']);
 Route::post('/todayTask',[TaskController::class,'todayTask']);

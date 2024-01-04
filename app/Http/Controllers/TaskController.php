@@ -203,7 +203,7 @@ public function searchTask(Request $request)
 
 
 
-public function deleteTask(Request $request)
+public function softDeleteTask(Request $request)
 {
         try{
         $task_id = $request->id;
