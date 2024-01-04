@@ -7,6 +7,7 @@ use App\Models\Comment;
 use App\Models\Task;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
@@ -370,6 +371,39 @@ public function forceDeleteTask(Request $request){
     }
     $task->forceDelete();
     return $this->ResponseTasks(null,'Task deleted successfully',200);
+}
+
+
+
+public function sharedTask(Request $request)
+{
+    $validatedData = $request->validate([
+        'task_id' => 'required|exists:tasks,id',
+        'user_id' => 'required|exists:users,id'
+    ]);
+
+    try {
+        $task = Task::find($validatedData['task_id']);
+        if (!$task) {
+            return $this->ResponseTasksErrors('Task not found', 404);
+        }
+
+        $sharedUsers = $task->sharedUsers()->pluck('users.id')->toArray();
+
+        if (in_array($validatedData['user_id'], $sharedUsers)) {
+            return $this->ResponseTasksErrors('The task has already been shared with this user', 500);
+        } else {
+            $attached = $task->sharedUsers()->attach($validatedData['user_id']);
+            if (!$attached) {
+                return $this->ResponseTasksErrors('Task sharing failed', 500);
+            }
+            return $this->ResponseTasks($task, 'Task shared successfully', 200);
+        }
+    } catch (ValidationException $e) {
+        return $this->ResponseTasksErrors('Please ensure the accuracy of the provided information and fill in the required fields', 400);
+    } catch (QueryException $e) {
+        return $this->ResponseTasksErrors('Task sharing failed', 500);
+    }
 }
 
 }
