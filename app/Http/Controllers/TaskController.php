@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Traits\GeneralTrait;
 use App\Models\Comment;
 use App\Models\Task;
-use App\Models\User;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -16,7 +15,7 @@ class TaskController extends Controller
 {
     use GeneralTrait;
 
-    public function getSortedTasks(Request $request)
+public function getSortedTasks(Request $request)
     {
         $sortBy = $request->input('sort_by');
 
@@ -51,7 +50,8 @@ class TaskController extends Controller
         return $this->ResponseTasks($sortedTasks,'All tasks sorted by ' . $sortBy, 200);
     }
 
-    protected function getColorForPriority(Request $request)
+
+protected function getColorForPriority(Request $request)
     {
         $priority=$request->input('priority');
         $priorityColors = [
@@ -67,7 +67,8 @@ class TaskController extends Controller
     }
 
 
-    public function createTask(Request $request)
+
+public function createTask(Request $request)
     {
         try {
             $validatedData = $request->validate([
@@ -102,7 +103,7 @@ class TaskController extends Controller
 
 
 
-    public function showTask(Request $request,Task $task)
+public function showTask(Request $request,Task $task)
     {
         $one=Task::where('id',$request->id)->get();
         if($one->isEmpty())
@@ -113,7 +114,7 @@ class TaskController extends Controller
     }
 
 
-    public function updateTask(Request $request, Task $task)
+public function updateTask(Request $request, Task $task)
     {
 
         try{
@@ -154,6 +155,7 @@ class TaskController extends Controller
 
 
 
+
 public function updateStatus(Request $request)
 {
     try{
@@ -180,6 +182,7 @@ catch(Exception $e){
 }
 
 
+
 public function searchTask(Request $request)
 {
     $title=$request->input('title');
@@ -193,6 +196,7 @@ public function searchTask(Request $request)
     }
     return $this->ResponseTasks($seachData,'Tasks matching the search criteria',200);
 }
+
 
 
 public function deleteTask(Request $request)
@@ -214,7 +218,7 @@ public function deleteTask(Request $request)
 
 
 
-   public function showStatus(Request $request)
+public function showStatus(Request $request)
     {
             $stat = $request->input('status');
 
@@ -236,29 +240,30 @@ public function deleteTask(Request $request)
             }
 
 
-            public function todayTask(Request $request){
-                $user=$request->input('user_id');
-                $today=now()->toDateString();
-                $tasks = Task::where('user_id',$user)->whereDate('due_date', '=', $today)->get();
-                $us=User::find($request->user_id);
-                if(!$us){
-                    return $this->ResponseTasksErrors('User not found',404);
-                }
-                if($tasks->isEmpty()){
-                    return $this->ResponseTasksErrors('Tasks expected to be completed today not found', 404);
-                }
-                return $this->ResponseTasks($tasks,'Tasks expected to be completed today',200);
-            }
+public function todayTask(Request $request){
+        $user=$request->input('user_id');
+        $today=now()->toDateString();
+        $tasks = Task::where('user_id',$user)->whereDate('due_date', '=', $today)->get();
+        $us = Task::where('user_id', $user)->exists();
+        if(!$us)
+        {
+            return $this->ResponseTasksErrors('User not found',404);
+        }
+        if($tasks->isEmpty())
+        {
+            return $this->ResponseTasksErrors('Tasks expected to be completed today not found', 404);
+        }
+            return $this->ResponseTasks($tasks,'Tasks expected to be completed today',200);
+        }
 
 
-    public function remindTasks(Request $request)
+
+public function remindTasks(Request $request)
 {
     $user=$request->input('user_id');
     $currentTime = now();
     $reminderTime = $currentTime->copy()->addMinutes(15);
-
-
-        $userExistsInTasks = Task::where('user_id', $user)->exists();
+    $userExistsInTasks = Task::where('user_id', $user)->exists();
     if(!$userExistsInTasks){
         return $this->ResponseTasksErrors('User not found',404);
     }
@@ -280,9 +285,12 @@ catch(Exception $e){
 }
 
 }
+
+
 public function taskNow(Request $request){
     try {
         $id = $request->input('user_id');
+
         $userExistsInTasks = Task::where('user_id', $id)->exists();
 
         if (!$userExistsInTasks) {
