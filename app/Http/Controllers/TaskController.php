@@ -212,7 +212,7 @@ public function softDeleteTask(Request $request)
 
         Comment::where('task_id',$task_id)->delete();
         $tasks=$task->delete();
-        return $this->ResponseTasks(null,'Task deleted successfully',200);
+        return $this->ResponseTasks(null,'The task was successfully moved to the Recycle Bin',200);
     }
     catch(Exception $e){
         return $this->ResponseTasksErrors('Task not found',404);
@@ -356,6 +356,20 @@ public function showDeletedTasks(Request $request)
     }
     $sortedTasks=$deletedTasks->get();
     return $this->ResponseTasks($sortedTasks,'All deleted tasks sorted by ' . $sortBy,200);
+}
+
+
+
+public function forceDeleteTask(Request $request){
+
+    $task_id=$request->input('id');
+    $task=Task::withTrashed()->find($task_id);
+    if(!$task)
+    {
+        return $this->ResponseTasksErrors('Task not found',404);
+    }
+    $task->forceDelete();
+    return $this->ResponseTasks(null,'Task deleted successfully',200);
 }
 
 }
