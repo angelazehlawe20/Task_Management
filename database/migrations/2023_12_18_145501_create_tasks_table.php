@@ -21,6 +21,8 @@ return new class extends Migration
             $table->string('title');
             $table->string('description');
             $table->dateTime('due_date')->useCurrent();
+            $table->enum('Repetition',['once','daily','weekly','monthly','annually']);
+            $table->enum('repeat_days', ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'])->nullable();
             $table->enum('status', ['COMPLETED', 'IN_PROGRESS', 'PENDING'])->default('PENDING');
             $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
