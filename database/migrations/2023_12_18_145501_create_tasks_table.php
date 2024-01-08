@@ -2,7 +2,6 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -21,9 +20,8 @@ return new class extends Migration
             $table->string('title');
             $table->string('description');
             $table->dateTime('due_date')->useCurrent();
-            $table->enum('Repetition',['once','daily','weekly','monthly','annually']);
-            $table->enum('repeat_days', ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'])->nullable();
             $table->enum('status', ['COMPLETED', 'IN_PROGRESS', 'PENDING'])->default('PENDING');
+            $table->boolean('incomplete')->nullable();
             $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
         });

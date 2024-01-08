@@ -74,7 +74,7 @@ protected function getColorForPriority(Request $request)
 
 
 
-public function createTask(Request $request)
+    public function createTask(Request $request)
     {
         try {
             $validatedData = $request->validate([
@@ -419,4 +419,18 @@ public function getSharedTasks(Request $request)
     return $this->ResponseTasks($checkUserr,'all tasks of user',200);
 }
 
+
+public function incompleteTasks(){
+    $dateTime=now();
+    $incompleteTasks=Task::where('due_date','<=',$dateTime)->where('status','!=','COMPLETED')->get();
+
+    if($incompleteTasks->isEmpty()){
+        return $this->ResponseTasksErrors('No incomplete tasks found', 404);
+    }
+    foreach ($incompleteTasks as $task) {
+        $task->incomplete = true;
+        $task->save();
+    }
+        return $this->ResponseTasks($incompleteTasks, 'Incomplete tasks updated successfully', 200);
+}
 }
