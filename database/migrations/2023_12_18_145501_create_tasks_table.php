@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('description');
             $table->dateTime('due_date')->useCurrent();
             $table->enum('status', ['COMPLETED', 'IN_PROGRESS', 'PENDING'])->default('PENDING');
-            $table->boolean('incomplete')->nullable();
+            $table->boolean('incomplete')->default(false);
             $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
         });

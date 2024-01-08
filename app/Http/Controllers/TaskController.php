@@ -433,4 +433,13 @@ public function incompleteTasks(){
     }
         return $this->ResponseTasks($incompleteTasks, 'Incomplete tasks updated successfully', 200);
 }
+
+
+public function getIncompleteTask(){
+    $tas=Task::where('incomplete',true)->get();
+    if($tas->isEmpty()){
+        return $this->ResponseTasksErrors('No incomplete tasks found',404);
+    }
+    return $this->ResponseTasks($tas,'Incomplete tasks',200);
+}
 }
