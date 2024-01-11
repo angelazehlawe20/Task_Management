@@ -163,4 +163,30 @@ public function searchComment(Request $request){
 
     }
 
+
+
+    public function showDeletedComments(Request $request)
+{
+    $sortBy=$request->input('sort_by');
+    $validateSort=['content','Deletion_time'];
+    if(!in_array($sortBy,$validateSort)){
+        return $this->ResponseTasksErrors('Invalid sorting parameter',400);
+    }
+    $deletedComments=Comment::onlyTrashed();
+
+    switch($sortBy){
+        case 'content':
+            $deletedComments->orderBy('content');
+            break;
+        case 'Deletion_time':
+            $deletedComments->orderBy('deleted_at');
+            break;
+        default:
+            return $this->ResponseTasksErrors('Invalid sorting parameter',400);
+            break;
+    }
+    $sortedComments=$deletedComments->get();
+    return $this->ResponseTasks($sortedComments,'All deleted comments sorted by ' . $sortBy,200);
+}
+
 }
