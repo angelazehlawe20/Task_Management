@@ -189,4 +189,17 @@ public function searchComment(Request $request){
     return $this->ResponseTasks($sortedComments,'All deleted comments sorted by ' . $sortBy,200);
 }
 
+
+public function forceDeleteComment(Request $request){
+
+    $comm_id=$request->input('id');
+    $comment=Comment::withTrashed()->find($comm_id);
+    if(!$comment)
+    {
+        return $this->ResponseTasksErrors('Comment not found',404);
+    }
+    $comment->forceDelete();
+    return $this->ResponseTasks(null,'Comment deleted successfully',200);
+}
+
 }
