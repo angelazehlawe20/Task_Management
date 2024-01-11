@@ -54,6 +54,7 @@ Route::post('/addComm',[CommentController::class,'newComment']);
 Route::post('/commOfTask',[CommentController::class,'getCommOfTask']);
 Route::post('/updateComment',[CommentController::class,'updateComment']);
 Route::post('/getUserComments',[CommentController::class,'getUserComments']);
+Route::post('/searchComment',[CommentController::class,'searchComment']);
 Route::post('/deleteComment',[CommentController::class,'deletComm']);
 
               ////user

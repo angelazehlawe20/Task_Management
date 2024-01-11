@@ -109,6 +109,34 @@ public function getAllSorted(Request $request){
 }
 
 
+
+
+public function searchComment(Request $request){
+    $content = $request->input('content');
+    $task_id = $request->input('task_id');
+
+    $query = Comment::where('task_id', $task_id);
+
+    if ($content) {
+        $query->where('content', 'like', '%' . $content . '%');
+    }
+
+    try {
+        $searchData = $query->get();
+    } catch (ModelNotFoundException $e) {
+        return $this->ResponseTasksErrors('Comment not found', 404);
+    }
+
+    if ($searchData->isEmpty()) {
+        return $this->ResponseTasksErrors('Comment not found', 404);
+    }
+
+    return $this->ResponseTasks($searchData, 'Comment matching the search criteria', 200);
+}
+
+
+
+
     public function deletComm(Request $request)
     {
         $comm_id=$request->input('id');
