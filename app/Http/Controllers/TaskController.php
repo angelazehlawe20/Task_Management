@@ -213,7 +213,7 @@ public function softDeleteTask(Request $request)
         $task = Task::findOrFail($task_id);
 
         Comment::where('task_id',$task_id)->delete();
-        $tasks=$task->delete();
+        $task->delete();
         return $this->ResponseTasks(null,'The task was successfully moved to the Recycle Bin',200);
     }
     catch(Exception $e){

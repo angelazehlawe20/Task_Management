@@ -109,8 +109,6 @@ public function getAllSorted(Request $request){
 }
 
 
-
-
 public function searchComment(Request $request){
     $content = $request->input('content');
     $task_id = $request->input('task_id');
@@ -145,8 +143,7 @@ public function searchComment(Request $request){
             return $this->ResponseTasksErrors('Comment not found',404);
         }
         $commDel->delete();
-        $comments=Comment::all();
-        return $this->ResponseTasks($comments,'Comment deleted successfully',200);
+        return $this->ResponseTasks(null,'Comment deleted successfully',200);
     }
 
 

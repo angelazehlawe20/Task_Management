@@ -18,7 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('task_id');
             $table->foreign('task_id')->references('id')->on('tasks');
             $table->text('content');
-            $table->timestamp('deleted_at')->nullable();
+$table->timestamp('deleted_at')->nullable();
             $table->dateTime('addition_date')->useCurrent();
             $table->timestamps();
         });
