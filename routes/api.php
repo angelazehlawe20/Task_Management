@@ -58,6 +58,8 @@ Route::post('/searchComment',[CommentController::class,'searchComment']);
 Route::post('/deleteComment',[CommentController::class,'deletComm']);
 Route::post('/restoreComment',[CommentController::class,'restoreComment']);
 Route::post('/showDeletedComments',[CommentController::class,'showDeletedComments']);
+Route::post('/forceDeleteComment',[CommentController::class,'forceDeleteComment']);
+
 
 
 
