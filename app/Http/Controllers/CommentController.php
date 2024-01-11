@@ -147,4 +147,20 @@ public function searchComment(Request $request){
     }
 
 
+
+
+
+    public function restoreComment(Request $request){
+
+        $comm_id=$request->input('id');
+        $delComm=Comment::withTrashed()->where('id',$comm_id)->first();
+        if(!$delComm)
+        {
+            return $this->ResponseTasksErrors('Comment not found',404);
+        }
+        $delComm->restore();
+        return $this->ResponseTasks($delComm,'Comment restored successfully',200);
+
+    }
+
 }
