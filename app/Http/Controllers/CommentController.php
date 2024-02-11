@@ -211,8 +211,10 @@ public function incompleteComments(Request $request){
         return $this->ResponseTasksErrors('No incomplete tasks found', 404);
     }
 
-    $incompleteComments=Comment::where('task_id',$task_id)->where('incomplete',false)->update(['incomplete'=>true]);
-    
+    $incompleteComments=Comment::where('task_id',$task_id)->where('incomplete_comment',false)->update(['incomplete_comment'=>true]);
+
+    $updatedCommentsCount = Comment::where('task_id', $task_id)->where('incomplete_comment', true)->count();
+
         return $this->ResponseTasks($incompleteComments, 'Incomplete comments updated successfully', 200);
 }
 

@@ -20,7 +20,7 @@ return new class extends Migration
             $table->text('content');
             $table->timestamp('deleted_at')->nullable();
             $table->dateTime('addition_date')->useCurrent();
-            $table->$table->boolean('incomplete')->default(false);
+            $table->$table->boolean('incomplete_comment')->default(false);
             $table->timestamps();
         });
     }
