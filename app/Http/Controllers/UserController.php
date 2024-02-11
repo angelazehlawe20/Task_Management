@@ -57,7 +57,10 @@ public function createUser(Request $request,User $user)
 catch(ValidationException $e){
     return $this->ResponseTasksErrors('Please ensure the accuracy of the provided information and fill in the required fields',400);
 }
+catch(Exception $e){
+    return $this->ResponseTasksErrors('An error occurred while creating the task',500);
 
+}
     $us=User::create($validatedData);
     return $this->ResponseTasks($us,'User created successfully',201);
 }
