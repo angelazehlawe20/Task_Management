@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Traits\GeneralTrait;
 use App\Models\Comment;
+use App\Models\Task;
 use Dotenv\Exception\ValidationException;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -200,6 +201,19 @@ public function forceDeleteComment(Request $request){
     }
     $comment->forceDelete();
     return $this->ResponseTasks(null,'Comment deleted successfully',200);
+}
+
+public function incompleteComments(Request $request){
+    $task_id=$request->input('task_id');
+    $checkIncompleteTask=Task::where('id',$task_id)->where('incomplete',true)->exists();
+
+    if(!$checkIncompleteTask){
+        return $this->ResponseTasksErrors('No incomplete tasks found', 404);
+    }
+
+    $incompleteComments=Comment::where('task_id',$task_id)->where('incomplete',false)->update(['incomplete'=>true]);
+    
+        return $this->ResponseTasks($incompleteComments, 'Incomplete comments updated successfully', 200);
 }
 
 }
