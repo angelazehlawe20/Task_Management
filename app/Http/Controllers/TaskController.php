@@ -428,7 +428,7 @@ public function incompleteTasks(){
         return $this->ResponseTasksErrors('No incomplete tasks found', 404);
     }
     foreach ($incompleteTasks as $task) {
-        $task->incomplete = true;
+        $task->incomplete_task = true;
         $task->save();
     }
         return $this->ResponseTasks($incompleteTasks, 'Incomplete tasks updated successfully', 200);
@@ -436,7 +436,7 @@ public function incompleteTasks(){
 
 
 public function getIncompleteTask(){
-    $tas=Task::where('incomplete',true)->get();
+    $tas=Task::where('incomplete_task',true)->get();
     if($tas->isEmpty()){
         return $this->ResponseTasksErrors('No incomplete tasks found',404);
     }
